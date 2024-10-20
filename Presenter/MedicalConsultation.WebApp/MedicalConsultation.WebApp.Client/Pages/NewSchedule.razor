@@ -1,0 +1,143 @@
+﻿@page "/newschedule"
+@using MedicalConsultation.WebApp.Client.Extensions
+@using MedicalConsultation.Shared;
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@using System.Globalization
+@using System.ComponentModel.DataAnnotations
+@using Bit.BlazorUI
+@using Microsoft.AspNetCore.Authorization
+@using static System.Net.WebRequestMethods
+
+@attribute [Authorize]
+
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JSRuntime;
+@inject IHttpClientFactory HttpClientFactory
+
+
+@rendermode InteractiveAuto
+
+<h3>Agendamento de Consulta</h3>
+
+
+@if (medicos == null)
+{
+    <p><em>Loading...</em></p>
+    <button class="btn btn-secondary" @onclick="Voltar" type="button">Cancelar</button>
+}
+else
+{
+    <EditForm Model="model" OnValidSubmit="PostEntidade">
+        @if (model.MedicalDoctor != null)
+        {
+            <div class="form-group mb-3">
+                <label for="ativocode">Ativo</label>
+                <select value="@model.MedicalDoctor.Id" @onchange="OnChangeMedico" class="form-control">
+                    <option value=""></option>
+                    @foreach (var item in medicos)
+                    {
+                        <option value="@item.Id">@item.Name</option>
+                    }
+                </select>
+            </div>
+        }
+        @if(data != null){
+             <div class="form-group mb-3">
+                <label for="ativocode">Data</label>
+                <input type="date" id="calendar" class="form-control bi" @bind="data" />
+            </div>
+        }
+
+        @if(horarios != null)
+        {
+            <div class="form-group mb-3">
+                <label for="ativocode">Horários</label>
+                <select value="@model.Id" @onchange="OnChangeHorario" class="form-control">
+                    <option value=""></option>
+                    @foreach (var item in horarios)
+                    {
+                        <option value="@item.Id">@item.Date</option>
+                    }
+                </select>
+            </div>
+        }
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <button class="btn btn-success" type="submit">Confirmar</button>
+        <button class="btn btn-secondary" @onclick="Voltar" type="button">Cancelar</button>
+    </EditForm>
+}
+
+
+@code {
+    private MedicalDoctorDao[]? medicos;
+    private MedicalDoctorScheduleDao[]? horarios;
+    private ScheduleDao model = new();
+    private DateTime data;
+    private HttpClient _httpClient;
+
+    private void Voltar()
+    {
+        NavigationManager.NavigateTo($"/schedules");
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+            var user = authState.User;
+            if (user.Identity.IsAuthenticated)
+            {
+                _httpClient = HttpClientFactory.CreateClient("MedicalDoctorApi");
+                medicos = await _httpClient.GetFromJsonAsync<MedicalDoctorDao[]>("listar");
+                data = DateTime.Now;
+            }
+        }
+        catch (AccessTokenNotAvailableException exception)
+        {
+            exception.Redirect();
+        }
+        catch (Exception ex)
+        {
+            JSRuntime.InvokeAsync<bool>("prompt", $"Erro {ex.Message}");
+        }
+    }
+
+    private void OnChangeMedico(ChangeEventArgs args)
+    {
+        if (args.Value != null)
+        {
+            var medicoId = args.Value.ToString();
+
+            //AtualizaHorarios();
+        }
+    }
+
+    private void OnChangeHorario(ChangeEventArgs args)
+    {
+        if (args.Value != null)
+        {
+            //var medicoId = args.Value.ToString();
+
+            //AtualizaHorarios();
+        }
+    }
+
+    async Task PostEntidade()
+    {
+        DateTime date = DateTime.Now;
+        string strAgendamento = date.ToString("dd/MM/yyyy HH:mm");
+        bool confirmed = await JSRuntime.InvokeAsync<bool>("confirm", $"Confirma o agendamento da consulta para {strAgendamento}?");
+        if (confirmed is false)
+            return;
+
+        // var response = await Http.PostAsJsonAsync("Schecule", model);
+        // if (response.IsSuccessStatusCode)
+        //     Voltar();
+        // else
+        //     JSRuntime.InvokeAsync<bool>("alert", $"Falha na operação {response.StatusCode}");
+    }
+}

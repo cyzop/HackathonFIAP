@@ -1,0 +1,99 @@
+﻿@page "/teste"
+
+@using MedicalConsultation.Shared;
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@using System.Globalization
+@using Microsoft.AspNetCore.Authorization
+
+@attribute [Authorize]
+
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JSRuntime;
+@inject IHttpClientFactory HttpClientFactory
+
+@rendermode InteractiveAuto
+
+<PageTitle>Teste</PageTitle>
+<h3>Teste</h3>
+
+<p>
+    <button class="btn btn-secondary" @onclick="Voltar">Voltar</button>
+    <button class="btn btn-info" @onclick="AgendarConsulta">Novo Agendamento</button>
+</p>
+
+@if (agendamentos == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Médico</th>
+                <th>Data</th>
+                <th>Horário</th>
+                <td></td>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var consulta in agendamentos)
+            {
+                <tr>
+                    <td>@consulta.Status</td>
+                    <td>@consulta.Date.ToString("dd/MM/yyyy")</td>
+                    <td>@consulta.Date.ToString("HH:mm")</td>
+                    <button class="btn btn-success" @onclick="() => CancelarConsulta(consulta)">Cancelar</button>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+}
+
+@code {
+    private ConsultationDao[]? agendamentos;
+    private HttpClient _httpClient;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+            var user = authState.User;
+            if (user.Identity.IsAuthenticated)
+            {
+                _httpClient = HttpClientFactory.CreateClient("ConsultationApi");
+                //var response = await _httpClient.GetAsync("ListarPorPaciente/1");
+                var response = await _httpClient.GetFromJsonAsync<ConsultationDao[]>($"Consultation/ListarPorPaciente/1");
+                //agendamentos = await _httpClient.GetFromJsonAsync<ConsultationDao[]>($"/ListarPorPaciente/1");
+            }
+        }
+        catch (AccessTokenNotAvailableException exception)
+        {
+            exception.Redirect();
+        }
+        catch (Exception ex)
+        {
+            JSRuntime.InvokeAsync<bool>("prompt", $"Erro {ex.Message}");
+        }
+    }
+
+    private void CancelarConsulta(ConsultationDao schedule)
+    {
+        //confirmar para excluir
+    }
+
+    private void Voltar()
+    {
+        NavigationManager.NavigateTo($"/");
+    }
+
+    private void AgendarConsulta()
+    {
+        NavigationManager.NavigateTo($"/newschedule");
+    }
+
+}
+

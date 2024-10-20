@@ -1,0 +1,336 @@
+﻿@page "/appointment"
+@using MedicalConsultation.Shared
+@using MedicalConsultation.WebApp.Client.Extensions
+@using Microsoft.AspNetCore.Authorization
+@using System.Globalization
+
+@attribute [Authorize]
+
+@inject NavigationManager NavigationManager
+
+@rendermode InteractiveAuto
+
+<h3>Calendário</h3>
+
+@if (TimeSlotsManha == null)
+{
+    <p><em>Loading...</em></p>
+    <button class="btn btn-secondary" @onclick="Voltar">Cancelar</button>
+}
+else
+{
+
+<div class="form-group">
+    <label for="monthSelect">Selecione o Mês:</label>
+        <select value="@SelectedMonth" id="monthSelect" class="form-control" @onchange="OnMonthChanged">
+        @foreach (var month in Months)
+        {
+            <option value="@month.Key" selected="@(month.Key == SelectedMonth)">@month.Value</option>
+        }
+    </select>
+    <label for="yearSelect">Selecione o Ano:</label>
+    <select id="yearSelect" class="form-control" >
+        <option value="@SelectedYear">@SelectedYear</option>
+    </select>
+    <label for="weekSelect">Selecione a Semana:</label>
+        <select value="@SelectedWeek" id="weekSelect" class="form-control" @onchange="OnWeekChanged">
+        @foreach (var week in Weeks.Keys)
+        {
+                <option value="@week" selected="@(week == SelectedWeek)">@Weeks[week]</option>
+        }
+    </select>
+</div>
+
+@* <div class="container">
+    <div class="row">
+        <div class="col-md-4 d-flex align-items-center">
+            <label for="calendar">Selecione uma data:</label>
+        </div>
+        <div class="col-md-4 d-flex align-items-center">
+            <button class="bi botao"  @onclick="() => SubMonth()"> &lt;&lt; </button>
+            <input type="date" id="calendar" class="form-control bi" @bind="selectedDate" />
+            <button class="bi botao" @onclick="() => AddMonth()"> &gt;&gt; </button>
+        </div>
+    </div>
+</div> *@
+
+ <EditForm Model="model" OnValidSubmit="PostEntidade">
+        <br/>
+        <button class="btn btn-success" type="submit">Confirmar</button>
+        <button class="btn btn-secondary" @onclick="Voltar" type="button">Cancelar</button>
+ </EditForm>
+}
+
+<!-- manhã -->
+<table class="table">
+    <thead>
+            <tr>
+                <th colspan="6" class="tabletitle">Manhã</th>
+            </tr>
+        <tr>
+            <th>Horário</th>
+            <th>Seg</th>
+            <th>Ter</th>
+            <th>Qua</th>
+            <th>Qui</th>
+            <th>Sex</th>
+        </tr>
+       
+    </thead>
+    <tbody>
+        @foreach (var timeSlot in TimeSlotsManha)
+        {
+            <tr>
+                <td>@timeSlot.ToString("HH:mm")</td>
+                @foreach (var day in DaysOfWeek)
+                {
+                    <td>
+                        <button @onclick="() => ToggleAvailability(day, timeSlot)"
+                            class="@(IsAvailable(day, timeSlot) ? "disponivel" : "indisponivel")">
+                            @(IsAvailable(day, timeSlot) ? "sim" : "não")
+                        </button>
+                    </td>
+                }
+            </tr>
+        }
+     </tbody>
+</table>
+<!-- tarde -->
+<table class="table">
+    <thead>
+        <tr>
+                <th colspan="6" class="tabletitle">Tarde</th>
+        </tr>
+        <tr>
+            <th>Horário</th>
+            <th>Seg</th>
+            <th>Ter</th>
+            <th>Qua</th>
+            <th>Qui</th>
+            <th>Sex</th>
+        </tr>
+           
+    </thead>
+    <tbody>
+    @foreach (var timeSlot in TimeSlotsTarde)
+    {
+        <tr>
+            <td>@timeSlot.ToString("HH:mm")</td>
+            @foreach (var day in DaysOfWeek)
+            {
+                <td>
+                    <button @onclick="() => ToggleAvailability(day, timeSlot)"
+                            class="@(IsAvailable(day, timeSlot) ? "disponivel" : "indisponivel")">
+                        @(IsAvailable(day, timeSlot) ? "sim" : "não")
+                    </button>
+                </td>
+            }
+        </tr>
+    }
+    </tbody>
+</table>
+<!-- noite -->
+<table class="table">
+    <thead>
+        <tr>
+                <th colspan="6" class="tabletitle">Noite</th>
+        </tr>
+        <tr>
+            <th>Horário</th>
+            <th>Seg</th>
+            <th>Ter</th>
+            <th>Qua</th>
+            <th>Qui</th>
+            <th>Sex</th>
+        </tr>
+            
+    </thead>
+    <tbody>
+        @foreach (var timeSlot in TimeSlotsNoite)
+        {
+            <tr>
+                <td>@timeSlot.ToString("HH:mm")</td>
+                @foreach (var day in DaysOfWeek)
+                {
+                    <td>
+                        <button @onclick="() => ToggleAvailability(day, timeSlot)"
+                                class="@(IsAvailable(day, timeSlot) ? "disponivel" : "indisponivel")">
+                            @(IsAvailable(day, timeSlot) ? "sim" : "não")
+                        </button>
+                    </td>
+                }
+            </tr>
+        }
+    </tbody>
+</table>
+}
+
+@code {
+    private MedicalDoctorScheduleDao model = new();
+    private DateTime selectedDate = DateTime.Now;
+    private Dictionary<int, string> Weeks {get;set;} = new Dictionary<int, string>();
+    private List<DateTime> TimeSlotsManha { get; set; } = new List<DateTime>();
+    private List<DateTime> TimeSlotsTarde { get; set; } = new List<DateTime>();
+    private List<DateTime> TimeSlotsNoite { get; set; } = new List<DateTime>();
+    private List<DayOfWeek> DaysOfWeek { get; set; } = new List<DayOfWeek>
+    {
+        DayOfWeek.Monday,
+        DayOfWeek.Tuesday,
+        DayOfWeek.Wednesday,
+        DayOfWeek.Thursday,
+        DayOfWeek.Friday
+    };
+
+    private Dictionary<(int, int, int), Dictionary<(DayOfWeek, DateTime), bool>>Availability { get; set; } = new Dictionary<(int,int, int), Dictionary<(DayOfWeek, DateTime), bool>>();
+    private int SelectedMonth { get; set; } = DateTime.Now.Month;
+    private int SelectedYear { get; set; } = DateTime.Now.Year;
+    private int SelectedWeek {get;set;} = 0;
+    private Dictionary<int, string> Months { get; set; } = new Dictionary<int, string>();
+
+    private void Voltar()
+    {
+        NavigationManager.NavigateTo("/");
+    }
+
+    protected override void OnInitialized()
+    {
+        GenerateMonths();
+        GenerateTimeSlots();
+        GenerateWeeks();
+
+        Calendar calendar = CultureInfo.CurrentCulture.Calendar;
+        CalendarWeekRule rule = CalendarWeekRule.FirstFourDayWeek;
+        DayOfWeek firstDayOfWeek = DayOfWeek.Monday;
+
+        int weekOfYear = calendar.GetWeekOfYear(DateTime.Now, rule, firstDayOfWeek);
+
+        SelectedWeek = weekOfYear;
+        StateHasChanged();
+    }
+    private void GenerateMonths()
+    {
+        for (int i = 1; i <= 12; i++)
+        {
+            Months.Add(i, new DateTime(1, i, 1).ToString("MMMM"));
+        }
+    }
+    private void GenerateWeeks()
+    {
+        Weeks.Clear();
+        DateTime firstDayOfMonth = new DateTime(SelectedYear, SelectedMonth, 1);
+        DateTime lastDayOfMonth = firstDayOfMonth.AddMonths(1).AddDays(-1);
+
+        CultureInfo cultureInfo = CultureInfo.CurrentCulture;
+        Calendar calendar = cultureInfo.Calendar;
+
+        int firstWeek = calendar.GetWeekOfYear(firstDayOfMonth, CalendarWeekRule.FirstDay, DayOfWeek.Monday);
+        int lastWeek = calendar.GetWeekOfYear(lastDayOfMonth, CalendarWeekRule.FirstDay, DayOfWeek.Monday);
+
+        DateTime currentDate = firstDayOfMonth;
+        for (int i = firstWeek; i <= lastWeek; i++)
+        {
+            DateTime firstDate = DateTime.MinValue;
+            DateTime lastDate = DateTime.MinValue;
+            if (i == firstWeek)
+                firstDate = firstDayOfMonth;
+            if (i == lastWeek)
+                lastDate = lastDayOfMonth;
+
+            for (int j = 0; j <= 7; j++) {
+                if (firstDate == DateTime.MinValue && currentDate.DayOfWeek == DayOfWeek.Monday)
+                    firstDate = currentDate;
+                if (lastDate == DateTime.MinValue && currentDate.DayOfWeek == DayOfWeek.Friday)
+                    lastDate = currentDate;
+
+                currentDate = currentDate.AddDays(1);
+                if (lastDate >= firstDate && firstDate > DateTime.MinValue)
+                    break;
+            }
+
+            if(!Weeks.ContainsKey(i))
+                Weeks.Add(i, $" {i}º semana -  Dias {firstDate.ToString("dd/MM")} à {lastDate.ToString("dd/MM")}");
+        }
+    }
+    private void GenerateTimeSlots()
+    {
+        TimeSlotsManha.Clear();
+        TimeSlotsTarde.Clear();
+        TimeSlotsNoite.Clear();
+        var startTime = new DateTime(1, 1, 1, 8, 0, 0); // 08:00
+        var endTime = new DateTime(1, 1, 1, 20, 0, 0); // 20:00
+
+        while (startTime <= endTime)
+        {
+            if (startTime < new DateTime(1, 1, 1, 12, 0, 0))
+                TimeSlotsManha.Add(startTime);
+            else
+            if (startTime < new DateTime(1, 1, 1, 18, 0, 0))
+                TimeSlotsTarde.Add(startTime);
+            else
+                TimeSlotsNoite.Add(startTime);
+
+            startTime = startTime.AddMinutes(30);
+        }
+    }
+   
+    private void SubMonth(){
+        var date = new DateTime(SelectedYear, SelectedMonth, 1).AddMonths(-1);
+        SelectedMonth = date.Month;
+        SelectedYear = date.Year;
+        selectedDate = selectedDate.AddMonths(-1);
+        GenerateWeeks();
+        StateHasChanged();
+    }
+    private void AddMonth(){
+        var date = new DateTime(SelectedYear, SelectedMonth, 1).AddMonths(1);
+        SelectedMonth = date.Month;
+        SelectedYear = date.Year;
+        selectedDate = selectedDate.AddMonths(1);
+        GenerateWeeks();
+        StateHasChanged();
+    }
+    private void ToggleAvailability(DayOfWeek day, DateTime timeSlot)
+    {
+        var yearMonthWeek = (SelectedYear, SelectedMonth, SelectedWeek);
+        var key = (day, timeSlot);
+        if (Availability.ContainsKey(yearMonthWeek))
+        {
+            if (Availability[yearMonthWeek].ContainsKey(key))
+                Availability[yearMonthWeek][key] = !Availability[yearMonthWeek][key];
+            else
+                Availability[yearMonthWeek][key] = true;
+        }
+        else
+        {
+            Availability[yearMonthWeek] = new Dictionary<(DayOfWeek, DateTime), bool>();
+            Availability[yearMonthWeek][key] = true;
+        }
+    }
+
+    private bool IsAvailable(DayOfWeek day, DateTime timeSlot)
+    {
+        var key = (day, timeSlot);
+        var yearMonthWeek = (SelectedYear, SelectedMonth, SelectedWeek);
+
+        return Availability.ContainsKey(yearMonthWeek) && Availability[yearMonthWeek].ContainsKey(key) && Availability[yearMonthWeek][key];
+    }
+
+    private void OnMonthChanged(ChangeEventArgs e)
+    {
+        SelectedMonth = int.Parse(e.Value.ToString());
+        selectedDate = new DateTime(SelectedYear, SelectedMonth, 1);
+        GenerateWeeks();
+        StateHasChanged();
+    }
+    private void OnWeekChanged(ChangeEventArgs e)
+    {
+        SelectedWeek = int.Parse(e.Value.ToString());
+        StateHasChanged();
+    }
+    async Task PostEntidade()
+    {
+            return;
+       
+    }
+   
+}
