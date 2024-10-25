@@ -1,6 +1,6 @@
 ﻿namespace MedicalConsultation.Entity.Schedule
 {
-    public class DailySchedulesEntity : Entity
+    public class DailySchedulesEntity : BasicEntity
     {
         public DayOfWeek DiaDaSemana { get; private set; }
         public virtual List<TimeEntity> Horarios { get; private set; }

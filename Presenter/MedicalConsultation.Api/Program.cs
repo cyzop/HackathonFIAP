@@ -14,7 +14,7 @@ var config = new ConfigurationBuilder()
 
 builder.Services.AddDbContext<ApplicationDbContext>(options => {
     options.UseSqlServer(config.GetConnectionString("ConnectionString"));
-    options.UseLazyLoadingProxies();
+    //options.UseLazyLoadingProxies();
 }, ServiceLifetime.Scoped);
 
 builder.Host

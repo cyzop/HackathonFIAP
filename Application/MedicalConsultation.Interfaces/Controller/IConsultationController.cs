@@ -4,11 +4,14 @@ namespace MedicalConsultation.Interfaces.Controller
 {
     public interface IConsultationController
     {
-        IEnumerable<ConsultationEntity> ListarPorPaciente(int id);
-        IEnumerable<ConsultationEntity> ListarPorPacienteAPartirDe(int id, DateTime data);
-        IEnumerable<ConsultationEntity> ListarPorMedico(int id);
-        IEnumerable<ConsultationEntity> ListarPorMedicoAPartirDe(int id, DateTime data);
+        IEnumerable<ConsultationEntity> ListarPorPaciente(string email);
+        IEnumerable<ConsultationEntity> ListarPorPacienteAPartirDe(string email, DateTime data);
+        IEnumerable<ConsultationEntity> ListarPorMedico(string email);
+        IEnumerable<ConsultationEntity> ListarPorMedicoAPartirDe(string email, DateTime data);
         ConsultationEntity Incluir(ConsultationEntity entity);
         ConsultationEntity Alterar(ConsultationEntity entity);
+        bool Cancelar(int idConsulta);
+
+        ConsultationEntity ListarPorId(int idConsulta);
     }
 }

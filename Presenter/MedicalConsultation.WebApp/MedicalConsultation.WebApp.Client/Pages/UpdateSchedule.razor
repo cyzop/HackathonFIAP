@@ -1,0 +1,174 @@
+﻿@page "/updateschedule/{Id}"
+@using MedicalConsultation.WebApp.Client.Extensions
+@using MedicalConsultation.Shared;
+@using MedicalConsultation.WebApp.Services
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@using System.Globalization
+@using System.ComponentModel.DataAnnotations
+@using Bit.BlazorUI
+@using Microsoft.AspNetCore.Authorization
+@using Newtonsoft.Json
+@using System.Text
+@using static System.Net.WebRequestMethods
+
+@attribute [Authorize]
+
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JSRuntime;
+@inject IHttpClientFactory HttpClientFactory
+@inject UsuarioService usuarioService
+
+
+@rendermode InteractiveAuto
+
+
+@if (consulta == null)
+{
+    <p><em>Loading...</em></p>
+    <button class="btn btn-secondary" @onclick="Voltar" type="button">Cancelar</button>
+}
+else
+{
+    <EditForm Model="consulta" OnValidSubmit="PostEntidade">
+        @if (consulta.MedicalDoctor != null)
+        {
+            <div class="form-group mb-3">
+                <label for="medico">Médico</label>
+                <input type="text" value="@consulta.MedicalDoctor.Name" id="medico" readonly />
+            </div>
+        }
+
+        <div class="form-group mb-3">
+            <label for="calendar">Data</label>
+            <input type="date" id="calendar" min="@DateTime.Today.ToString("yyyy-MM-dd")" class="form-control bi" @bind="consulta.Date" />
+        </div>
+
+        @if(horarios != null)
+        {
+            <div class="form-group mb-3">
+                <label for="horario">Horário</label>
+                <select class="form-control" id="horario" @bind="hora">
+                    <option value=""></option>
+                    @foreach (var item in horarios)
+                    {
+                        <option value="@item">@item</option>
+                    }
+                </select>
+            </div>
+        }
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+        <button class="btn btn-success" type="submit">Confirmar</button>
+        <button class="btn btn-secondary" @onclick="Voltar" type="button">Cancelar</button>
+    </EditForm>
+}
+
+@code {
+    [Parameter]
+    public string Id { get; set; }
+
+    private string[]? horarios;
+    private ConsultationDao consulta = new();
+    private string hora { get; set; }
+    private HttpClient _httpClient;
+    private bool _initialized;
+
+    private void Voltar()
+    {
+        NavigationManager.NavigateTo($"/schedules");
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (!_initialized)
+        {
+            _initialized = true;
+            try
+            {
+                var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+                var user = authState.User;
+                if (user.Identity.IsAuthenticated)
+                {
+                    _httpClient = HttpClientFactory.CreateClient("ConsultationApi");
+                    var response = await _httpClient.GetAsync($"Consultation/Consultar/{Id}");
+
+                    if (response.IsSuccessStatusCode && response.StatusCode == System.Net.HttpStatusCode.OK)
+                    {
+                        string content = await response.Content.ReadAsStringAsync();
+                        consulta = JsonConvert.DeserializeObject<ConsultationDao>(content);
+                        hora = consulta.Date.ToString("HH:mm");
+                    }
+
+                    if (horarios == null)
+                        GerarHorarios();
+                }
+            }
+            catch (AccessTokenNotAvailableException exception)
+            {
+                exception.Redirect();
+            }
+            catch (Exception ex)
+            {
+                JSRuntime.InvokeAsync<bool>("prompt", $"Erro {ex.Message}");
+            }
+        }
+    }
+
+    private void GerarHorarios()
+    {
+        horarios = TimeService.GerarHorariosConsulta();
+    }
+
+    private void OnChangeMedico(ChangeEventArgs args)
+    {
+        if (args.Value != null)
+        {
+            var medicoId = args.Value.ToString();
+            if (!string.IsNullOrEmpty(medicoId))
+                consulta.MedicalId = int.Parse(medicoId);
+        }
+    }
+
+    private void OnChangeHorario(ChangeEventArgs args)
+    {
+        if (args.Value != null)
+        {
+            hora = args.Value.ToString();
+        }
+    }
+
+    async Task PostEntidade()
+    {
+        if (DateTime.TryParse(hora, out var parsedHora))
+        {
+            var novaData = new DateTime(consulta.Date.Year, consulta.Date.Month, consulta.Date.Day);
+            consulta.Date = novaData.Add(parsedHora.TimeOfDay);
+        }
+
+        if (consulta.Date.DayOfWeek == DayOfWeek.Sunday)
+        {
+            JSRuntime.InvokeAsync<bool>("alert", $"Não é permitido marcação de consulta aos domingos.");
+            return;
+        }
+
+        if (DateTime.Compare(consulta.Date, DateTime.Now) <= 0)
+        {
+            JSRuntime.InvokeAsync<bool>("alert", $"Informe uma data e horário válidos para a remarcação da consulta.");
+            return;
+        }
+
+        string strAgendamento = consulta.Date.ToString("dd/MM/yyyy HH:mm");
+        bool confirmed = await JSRuntime.InvokeAsync<bool>("confirm", $"Confirma o reagendamento da consulta para {strAgendamento}?");
+        if (confirmed is false)
+            return;
+
+        _httpClient = HttpClientFactory.CreateClient("ConsultationApi");
+        var content = new StringContent(System.Text.Json.JsonSerializer.Serialize(consulta), Encoding.UTF8, "application/json");
+        var response = await _httpClient.PostAsync("consultation/Alterar", content);
+        if (response.IsSuccessStatusCode && response.StatusCode == System.Net.HttpStatusCode.OK)
+            Voltar();
+        else
+            JSRuntime.InvokeAsync<bool>("alert", $"Falha na operação {response.StatusCode}");
+    }
+}

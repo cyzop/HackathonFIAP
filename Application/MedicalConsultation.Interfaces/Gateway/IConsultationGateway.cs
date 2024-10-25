@@ -14,5 +14,6 @@ namespace MedicalConsultation.Interfaces.Gateway
         ConsultationEntity AtualizarConsulta(ConsultationEntity consulta);
         IEnumerable<ConsultationEntity> ObterConsultasPacienteNoPeriodo(int pacienteId, DateTime horarioInicio, DateTime horarioFim);
         IEnumerable<ConsultationEntity> ObterConsultasMedicoNoPeriodo(int medicoId, DateTime horarioInicio, DateTime horarioFim);
+        ConsultationEntity ObterPorId(int idConsulta);
     }
 }

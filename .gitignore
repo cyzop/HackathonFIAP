@@ -30,3 +30,6 @@
 /Presenter/MedicalConsultation.WebApp/MedicalConsultation.WebApp.Client/obj
 /UseCase/MedicalConsultation.UseCases/bin/Debug/net8.0
 /UseCase/MedicalConsultation.UseCases/obj
+/Presenter/Client
+/Presenter/Server
+/Presenter/Teste

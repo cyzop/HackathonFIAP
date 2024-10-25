@@ -1,11 +1,12 @@
-﻿using MedicalConsultation.Entity.Patient;
+﻿using MedicalConsultation.Entity;
+using MedicalConsultation.Entity.Patient;
 using MedicalConsultation.Shared;
 
 namespace MedicalConsultation.Api.Converter
 {
-    public class PatientDaoConverter : IDaoConverter<PatientDao, PatientEntity>
+    public class PatientDaoConverter : IDaoConverter<PatientDao, UserEntity>
     {
-        public PatientEntity Convert(PatientDao dao)
-            => new PatientEntity(dao.Id, dao.Name, dao.email, dao.cpf);
+        public UserEntity Convert(PatientDao dao)
+            => new UserEntity(dao.Id, dao.Name, dao.cpf, dao.Email);
     }
 }

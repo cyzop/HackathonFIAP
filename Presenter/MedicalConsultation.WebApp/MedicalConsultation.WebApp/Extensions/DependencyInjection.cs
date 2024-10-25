@@ -6,9 +6,14 @@ namespace MedicalConsultation.WebApp.Extensions
     {
         public static IServiceCollection AddServices(this IServiceCollection services, IConfiguration config)
         {
+            //services.AddBlazoredLocalStorage();
+
+            services.AddSingleton<UsuarioService>();
+
             services.AddTransient<MedicalDoctorApi>();
             services.AddTransient<PatientApi>();
             services.AddTransient<ConsultationApi>();
+            services.AddTransient<UserApi>();
 
             services.AddHttpClient("MedicalDoctorApi", client =>
             {
@@ -25,6 +30,12 @@ namespace MedicalConsultation.WebApp.Extensions
             services.AddHttpClient("ConsultationApi", client =>
             {
                 client.BaseAddress = new Uri(config["ConsultationApi:url"]);
+                client.DefaultRequestHeaders.Add("Accept", "application/json");
+            });
+
+            services.AddHttpClient("UserApi", client =>
+            {
+                client.BaseAddress = new Uri(config["UserApi:url"]);
                 client.DefaultRequestHeaders.Add("Accept", "application/json");
             });
 

@@ -1,20 +1,21 @@
-﻿using MedicalConsultation.Entity.Patient;
+﻿using MedicalConsultation.Entity;
+using MedicalConsultation.Entity.Patient;
 using MedicalConsultation.Validations;
 
 namespace MedicalConsultation.UseCases.Patient
 {
     public class IncludePatientUseCase
     {
-        private readonly PatientEntity _newEntity;
-        private readonly PatientEntity _entityByEmail;
+        private readonly UserEntity _newEntity;
+        private readonly UserEntity _entityByEmail;
 
-        public IncludePatientUseCase(PatientEntity novoPaciente, PatientEntity pacientePorEmail)
+        public IncludePatientUseCase(UserEntity novoPaciente, UserEntity pacientePorEmail)
         {
             _newEntity = novoPaciente;
             _entityByEmail = pacientePorEmail;
         }
 
-        public PatientEntity VerificarExistente()
+        public UserEntity VerificarExistente()
         {
             if (_entityByEmail!=null && !_entityByEmail.Ativo)
             {

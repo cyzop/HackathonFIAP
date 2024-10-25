@@ -1,4 +1,6 @@
-﻿@implements IDisposable
+﻿@using MedicalConsultation.WebApp.Services
+
+@implements IDisposable
 
 @inject NavigationManager NavigationManager
 
@@ -21,26 +23,24 @@
                 <img class="bi" src="https://img.icons8.com/?size=100&id=wFfu6zXx15Yk&format=png&color=000000"/> Home
             </NavLink>
         </div>
-        <!-- Match="NavLinkMatch.All"-->
-        <div class="nav-item px-3">
-            <NavLink href="/appointment" class="nav-link">
+       @*  @if (isAuthenticated && UsuarioService.Medico)
+        {
+            <!-- Match="NavLinkMatch.All"-->
+            <div class="nav-item px-3">
+                <NavLink href="/doctorschedules" class="nav-link">
                 <img class="bi" src="https://img.icons8.com/?size=100&id=3Ct72x2Fd7mT&format=png&color=000000" />  Calendário Médico
             </NavLink>
         </div>
-
+        } *@
+         <AuthorizeView>
+            <Authorized>
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="/schedules">
                 <img class="bi" src="https://img.icons8.com/?size=100&id=28WzaxCdZhVK&format=png&color=000000" /> Agendamentos
             </NavLink>
         </div>
-
-        @* <div class="nav-item px-3">
-            <NavLink class="nav-link" href="auth">
-                <span class="bi bi-lock-nav-menu" aria-hidden="true"></span> Auth Required
-            </NavLink>
-        </div> *@
-
-        
+        </Authorized>
+        </AuthorizeView>
 
         <AuthorizeView>
             <Authorized>
@@ -54,9 +54,8 @@
                     <form action="Account/Logout" method="post">
                         <AntiforgeryToken />
                         <input type="hidden" name="ReturnUrl" value="@currentUrl" />
-                        <button type="submit" class="nav-link">
-                            <img class="bi" src="https://img.icons8.com/?size=100&id=wPhfVWUu3RLr&format=png&color=000000"/>
-                           @*  <span class="bi bi-arrow-bar-left-nav-menu" aria-hidden="true"></span>  *@Logout
+                    <button type="submit" class="nav-link">
+                            <img class="bi" src="https://img.icons8.com/?size=100&id=wPhfVWUu3RLr&format=png&color=000000"/> Logout
                         </button>
                     </form>
                 </div>
@@ -87,6 +86,7 @@
     {
         currentUrl = NavigationManager.ToBaseRelativePath(NavigationManager.Uri);
         NavigationManager.LocationChanged += OnLocationChanged;
+
     }
 
     private void OnLocationChanged(object? sender, LocationChangedEventArgs e)

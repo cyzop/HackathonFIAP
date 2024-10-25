@@ -2,20 +2,19 @@
 using MedicalConsultation.Interfaces.Controller;
 using MedicalConsultation.Interfaces.Gateway;
 using MedicalConsultation.UseCases.Consultation;
-using MedicalConsultation.UseCases.Patient;
 
 namespace MedicalConsultation.Controller
 {
     public class ConsultationController : IConsultationController
     {
         private readonly IConsultationGateway _consultationGateway;
-        private readonly IPatientGateway _patientGateway;
         private readonly IMedicalDoctorGateway _medicalDoctorGateway;
+        private readonly IUserGateway _userGateway;
 
-        public ConsultationController(IConsultationGateway consultationGateway, IPatientGateway patientGateway, IMedicalDoctorGateway medicalDoctorGateway)
+        public ConsultationController(IConsultationGateway consultationGateway, IUserGateway userGateway, IMedicalDoctorGateway medicalDoctorGateway)
         {
             _consultationGateway = consultationGateway;
-            _patientGateway = patientGateway;
+            _userGateway = userGateway;
             _medicalDoctorGateway = medicalDoctorGateway;
         }
 
@@ -24,9 +23,22 @@ namespace MedicalConsultation.Controller
             return _consultationGateway.AtualizarConsulta(entity);
         }
 
+        public bool Cancelar(int idConsulta)
+        {
+            var consulta = _consultationGateway.ObterPorId(idConsulta);
+            if(consulta != null)
+            {
+                var useCase = new CancelConsultationUseCase(consulta);
+                var cancelamento = useCase.VerificarCancelamento();
+                if (cancelamento != null)
+                    _consultationGateway.AtualizarConsulta(cancelamento);
+            }
+            return true;
+        }
+
         public ConsultationEntity Incluir(ConsultationEntity entity)
         {
-            var paciente = _patientGateway.ObterPorId(entity.PacienteId);
+            var paciente = _userGateway.ObterPorId(entity.PacienteId);
             var medico = _medicalDoctorGateway.ObterPorId(entity.MedicoId);
 
             DateTime datahoraInicio = entity.Date;
@@ -49,24 +61,45 @@ namespace MedicalConsultation.Controller
             return obj;
         }
 
-        public IEnumerable<ConsultationEntity> ListarPorMedico(int id)
+        public ConsultationEntity ListarPorId(int idConsulta)
         {
-            return _consultationGateway.ListarConsultasMedicoAPartirDe(id, DateTime.Now)?.ToList();
+            return _consultationGateway.ObterPorId(idConsulta);
         }
 
-        public IEnumerable<ConsultationEntity> ListarPorMedicoAPartirDe(int id, DateTime data)
+        public IEnumerable<ConsultationEntity> ListarPorMedico(string email)
         {
-            return _consultationGateway.ListarConsultasMedicoAPartirDe(id, data)?.ToList();
+            var medico = _medicalDoctorGateway.ObterPorEmail(email);
+            if (medico != null)
+                return _consultationGateway.ListarConsultasMedicoAPartirDe(medico.Id, DateTime.Now)?.ToList();
+            else
+                return null;
         }
 
-        public IEnumerable<ConsultationEntity> ListarPorPaciente(int id)
+        public IEnumerable<ConsultationEntity> ListarPorMedicoAPartirDe(string email, DateTime data)
         {
-            return _consultationGateway.ListarConsultasPacienteAPartirDe(id, DateTime.Now).ToList();
+            var medico = _medicalDoctorGateway.ObterPorEmail(email);
+            if (medico != null)
+                return _consultationGateway.ListarConsultasMedicoAPartirDe(medico.Id, data)?.ToList();
+            else
+                return null;
         }
 
-        public IEnumerable<ConsultationEntity> ListarPorPacienteAPartirDe(int id, DateTime data)
+        public IEnumerable<ConsultationEntity> ListarPorPaciente(string email)
         {
-            return _consultationGateway.ListarConsultasPacienteAPartirDe(id, data).ToList();
+            var paciente = _userGateway.ObterPorEmail(email);
+            if (paciente != null)
+                return _consultationGateway.ListarConsultasPacienteAPartirDe(paciente.Id, DateTime.Now).ToList();
+            else
+                return null;
+        }
+
+        public IEnumerable<ConsultationEntity> ListarPorPacienteAPartirDe(string email, DateTime data)
+        {
+            var paciente = _userGateway.ObterPorEmail(email);
+            if (paciente != null)
+                return _consultationGateway.ListarConsultasPacienteAPartirDe(paciente.Id, data).ToList();
+            else
+                return null;
         }
     }
 }

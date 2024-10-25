@@ -9,14 +9,14 @@ namespace MedicalConsultation.UseCases.Consultation
     public class IncludeConsultationUseCase
     {
         private readonly MedicalDoctorEntity _medico;
-        private readonly PatientEntity _paciente;
+        private readonly UserEntity _paciente;
         private readonly ConsultationEntity _consultaMesmoHorarioMedico;
         private readonly ConsultationEntity _consultaMesmoHorarioPaciente;
         private readonly ConsultationEntity _novaConsulta;
 
         public IncludeConsultationUseCase(
             MedicalDoctorEntity medico, 
-            PatientEntity paciente, 
+            UserEntity paciente, 
             ConsultationEntity consultaMesmoHorarioMedico,
             ConsultationEntity consultaMesmoHorarioPaciente,
             ConsultationEntity novaConsulta)

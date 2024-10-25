@@ -7,5 +7,8 @@
         public DateTime? StatusDate { get; set; }
         public int MedicalId { get; set; }
         public int PatientId { get; set; }
+
+        public MedicalDoctorDao? MedicalDoctor { get; set; }
+        public PatientDao? Patient { get; set; }
     }
 }

@@ -4,9 +4,10 @@ using MedicalConsultation.Validations;
 
 namespace MedicalConsultation.Entity.Notify
 {
-    public class ConsultationNotificationEntity : Entity
+    public class ConsultationNotificationEntity : BasicEntity
     {
-        public ConsultationNotificationEntity(int id, bool ativo = true) : base(id, ativo) 
+        public string Message { get; private set; }
+        public ConsultationNotificationEntity(int id, bool ativo = true) : base(id)
         {
         }
 
@@ -15,6 +16,8 @@ namespace MedicalConsultation.Entity.Notify
             Consulta = consulta;
             ConsultaId = consulta.Id;
             Data = data;
+
+            Validate();
         }
 
         public DateTime Data { get; private set; }
@@ -23,6 +26,9 @@ namespace MedicalConsultation.Entity.Notify
 
         public void SetDate(DateTime date)
             => Data = date;
+
+        public void SetMessage(string message)
+            => Message = message;
 
         public override void Validate()
         {

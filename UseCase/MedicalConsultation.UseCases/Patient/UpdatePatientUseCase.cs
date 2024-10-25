@@ -1,22 +1,23 @@
-﻿using MedicalConsultation.Entity.Patient;
+﻿using MedicalConsultation.Entity;
+using MedicalConsultation.Entity.Patient;
 using MedicalConsultation.Validations;
 
 namespace MedicalConsultation.UseCases.Patient
 {
     public class UpdatePatientUseCase
     {
-        private readonly PatientEntity _novo;
-        private readonly PatientEntity _byId;
-        private readonly PatientEntity _byEmail;
+        private readonly UserEntity _novo;
+        private readonly UserEntity _byId;
+        private readonly UserEntity _byEmail;
 
-        public UpdatePatientUseCase(PatientEntity novo, PatientEntity byId, PatientEntity byEmail)
+        public UpdatePatientUseCase(UserEntity novo, UserEntity byId, UserEntity byEmail)
         {
             _novo = novo;
             _byId = byId;
             _byEmail = byEmail;
         }
 
-        public PatientEntity VerificarExistente()
+        public UserEntity VerificarExistente()
         {
             Assertion.AssertIsNotNull(_byId, Messages.UseCaseValidationMessages.PatientValidationMessages.PatientNotFound);
 

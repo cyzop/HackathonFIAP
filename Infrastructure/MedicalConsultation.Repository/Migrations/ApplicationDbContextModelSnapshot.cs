@@ -18,27 +18,9 @@ namespace MedicalConsultation.Repository.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("ProductVersion", "8.0.10")
-                .HasAnnotation("Proxies:ChangeTracking", false)
-                .HasAnnotation("Proxies:CheckEquality", false)
-                .HasAnnotation("Proxies:LazyLoading", true)
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("HorariosDiaSemana", b =>
-                {
-                    b.Property<int>("HorarioDiaId")
-                        .HasColumnType("INT");
-
-                    b.Property<int>("HorarioId")
-                        .HasColumnType("INT");
-
-                    b.HasKey("HorarioDiaId", "HorarioId");
-
-                    b.HasIndex("HorarioId");
-
-                    b.ToTable("HorariosDiaSemana");
-                });
 
             modelBuilder.Entity("MedicalConsultation.Entity.Consultation.ConsultationEntity", b =>
                 {
@@ -85,31 +67,53 @@ namespace MedicalConsultation.Repository.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<bool>("Ativo")
-                        .HasColumnType("BIT");
-
                     b.Property<string>("CRM")
                         .IsRequired()
                         .HasColumnType("VARCHAR(20)");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("VARCHAR(150)");
 
                     b.Property<string>("Especialidade")
                         .IsRequired()
                         .HasColumnType("VARCHAR(150)");
 
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("VARCHAR(150)");
+                    b.Property<int>("UsuarioId")
+                        .HasColumnType("INT");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("UsuarioId");
 
                     b.ToTable("Medico", (string)null);
                 });
 
-            modelBuilder.Entity("MedicalConsultation.Entity.Patient.PatientEntity", b =>
+            modelBuilder.Entity("MedicalConsultation.Entity.Notify.ConsultationNotificationEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INT");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<bool>("Ativo")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("ConsultaId")
+                        .HasColumnType("INT");
+
+                    b.Property<DateTime>("Data")
+                        .HasColumnType("DATETIME");
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasColumnType("VARCHAR(250)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ConsultaId");
+
+                    b.ToTable("Notificacao", (string)null);
+                });
+
+            modelBuilder.Entity("MedicalConsultation.Entity.UserEntity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -120,9 +124,14 @@ namespace MedicalConsultation.Repository.Migrations
                     b.Property<bool>("Ativo")
                         .HasColumnType("BIT");
 
-                    b.Property<string>("Cpf")
+                    b.Property<string>("CPF")
                         .IsRequired()
                         .HasColumnType("VARCHAR(14)");
+
+                    b.Property<string>("Discriminator")
+                        .IsRequired()
+                        .HasMaxLength(13)
+                        .HasColumnType("nvarchar(13)");
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -134,64 +143,18 @@ namespace MedicalConsultation.Repository.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Paciente", (string)null);
+                    b.ToTable("Usuario", (string)null);
+
+                    b.HasDiscriminator().HasValue("UserEntity");
+
+                    b.UseTphMappingStrategy();
                 });
 
-            modelBuilder.Entity("MedicalConsultation.Entity.Schedule.DailySchedulesEntity", b =>
+            modelBuilder.Entity("MedicalConsultation.Entity.Patient.PatientEntity", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INT");
+                    b.HasBaseType("MedicalConsultation.Entity.UserEntity");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<bool>("Ativo")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("DiaDaSemana")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("HorarioDia", (string)null);
-                });
-
-            modelBuilder.Entity("MedicalConsultation.Entity.Schedule.TimeEntity", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INT");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<bool>("Ativo")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("DiaDaSemana")
-                        .HasColumnType("int");
-
-                    b.Property<TimeSpan>("Hora")
-                        .HasColumnType("TIME");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Horario", (string)null);
-                });
-
-            modelBuilder.Entity("HorariosDiaSemana", b =>
-                {
-                    b.HasOne("MedicalConsultation.Entity.Schedule.DailySchedulesEntity", null)
-                        .WithMany()
-                        .HasForeignKey("HorarioDiaId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("MedicalConsultation.Entity.Schedule.TimeEntity", null)
-                        .WithMany()
-                        .HasForeignKey("HorarioId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.HasDiscriminator().HasValue("PatientEntity");
                 });
 
             modelBuilder.Entity("MedicalConsultation.Entity.Consultation.ConsultationEntity", b =>
@@ -211,6 +174,28 @@ namespace MedicalConsultation.Repository.Migrations
                     b.Navigation("Medico");
 
                     b.Navigation("Paciente");
+                });
+
+            modelBuilder.Entity("MedicalConsultation.Entity.MedicalDoctor.MedicalDoctorEntity", b =>
+                {
+                    b.HasOne("MedicalConsultation.Entity.UserEntity", "Usuario")
+                        .WithMany()
+                        .HasForeignKey("UsuarioId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Usuario");
+                });
+
+            modelBuilder.Entity("MedicalConsultation.Entity.Notify.ConsultationNotificationEntity", b =>
+                {
+                    b.HasOne("MedicalConsultation.Entity.Consultation.ConsultationEntity", "Consulta")
+                        .WithMany()
+                        .HasForeignKey("ConsultaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Consulta");
                 });
 #pragma warning restore 612, 618
         }

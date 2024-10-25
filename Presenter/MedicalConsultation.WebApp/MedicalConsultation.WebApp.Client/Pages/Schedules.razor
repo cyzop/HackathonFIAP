@@ -1,0 +1,146 @@
+﻿@page "/schedules"
+@rendermode InteractiveServer
+
+@using MedicalConsultation.WebApp.Client.Extensions
+@using MedicalConsultation.Shared
+@using MedicalConsultation.WebApp.Services
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@using System.Globalization
+@using Microsoft.AspNetCore.Authorization
+@using Newtonsoft.Json
+
+@attribute [Authorize]
+
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JSRuntime;
+@inject IHttpClientFactory HttpClientFactory
+@inject UsuarioService UsuarioService
+
+<PageTitle>Meus Agendamentos</PageTitle>
+<h3>Meus Agendamentos</h3>
+
+<p>
+    <button class="btn btn-secondary" @onclick="Voltar">Voltar</button>
+    <button class="btn btn-info" @onclick="AgendarConsulta" >Novo Agendamento</button>
+</p>
+
+@if (agendamentos == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Médico</th>
+                <th>Data</th>
+                <th>Horário</th>
+                <th>Status</th>
+                <td></td>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var consulta in agendamentos)
+            {
+                <tr>
+                    <td>@consulta.MedicalDoctor?.Name</td>
+                    <td>@consulta.Date.ToString("dd/MM/yyyy")</td>
+                    <td>@consulta.Date.ToString("HH:mm")</td>
+                    <td>@FormataStatus(consulta.Status, consulta.StatusDate) </td>
+                    <td><button class="btn btn-warning" @onclick="() => ReagendarConsulta(consulta)">Reagendar</button></td>
+                    <td><button class="btn btn-danger" @onclick="() => CancelarConsulta(consulta)">Cancelar</button></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    
+}
+
+@code {
+    private ConsultationDao[]? agendamentos;
+    private HttpClient _httpClient;
+    private bool _initialized;
+
+    protected string FormataStatus(string status, DateTime? dataStatus)
+    {
+        var ret = status;
+        if (dataStatus.HasValue)
+            ret += " em " + dataStatus.Value.ToString("dd/MM/yyyy HH:mm:ss");
+
+        return ret;
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (!_initialized)
+        {
+            _initialized = true;
+            try
+            {
+                var x = UsuarioService?.Id;
+
+                var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+                var user = authState.User;
+                if (user.Identity.IsAuthenticated)
+                {
+
+                    _httpClient = HttpClientFactory.CreateClient("ConsultationApi");
+                    var url = $"Consultation/ListarPorPaciente/{user.Identity.Name}";
+                    var response = await _httpClient.GetAsync(url);
+                    if (response.IsSuccessStatusCode && response.StatusCode == System.Net.HttpStatusCode.OK)
+                    {
+                        string content = await response.Content.ReadAsStringAsync();
+                        agendamentos = JsonConvert.DeserializeObject<ConsultationDao[]>(content);
+                    }
+                    else
+                        agendamentos = new ConsultationDao[0];
+                }
+            }
+            catch (AccessTokenNotAvailableException exception)
+            {
+                if(exception != null)
+                    exception.Redirect();
+            }
+            catch (Exception ex)
+            {
+                //  JSRuntime.InvokeAsync<bool>("prompt", $"Erro {ex.Message}");
+            }
+        }
+    }
+
+    async Task ReagendarConsulta(ConsultationDao consulta)
+    {
+        NavigationManager.NavigateTo($"/updateschedule/{consulta.Id}");
+     
+    }
+
+    async Task CancelarConsulta(ConsultationDao consulta)
+    {
+        //confirmar para excluir
+        string data = consulta.Date.ToString("dd/MM/yyyy");
+        string hora = consulta.Date.ToString("HH:mm");
+        bool confirmed = await JSRuntime.InvokeAsync<bool>("confirm", $"Confirma cancelar a consulta do dia {data} marcada para {hora} ?");
+        if (confirmed is false)
+            return;
+
+        _httpClient = HttpClientFactory.CreateClient("ConsultationApi");
+        var response = await _httpClient.GetAsync($"Consultation/Cancelar/{consulta.Id}");
+        if (response.IsSuccessStatusCode && 
+            response.StatusCode == System.Net.HttpStatusCode.OK)
+        {
+            StateHasChanged();//chamar ao final do salvar
+        }
+    }
+
+    private void Voltar()
+    {
+        NavigationManager.NavigateTo($"/");
+    }
+
+    private void AgendarConsulta(){
+        NavigationManager.NavigateTo($"/newschedule");
+    }
+
+}

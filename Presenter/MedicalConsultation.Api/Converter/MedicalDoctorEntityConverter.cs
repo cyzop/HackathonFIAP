@@ -7,7 +7,16 @@ namespace MedicalConsultation.Api.Converter
     {
         public MedicalDoctorDao Convert(MedicalDoctorEntity entity)
         {
-            throw new NotImplementedException();
+            return entity!=null ?
+                new MedicalDoctorDao()
+                {
+                    Id = entity.Id,
+                    Crm = entity.CRM,
+                    Especialidade = entity.Especialidade,
+                    Name = entity.Usuario?.Name,
+                    email = entity.Usuario?.Email,
+                    CPF = entity.Usuario?.CPF
+                } : null;
         }
     }
 }

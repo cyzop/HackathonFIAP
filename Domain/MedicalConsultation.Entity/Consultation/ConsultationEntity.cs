@@ -5,9 +5,9 @@ using MedicalConsultation.Validations;
 
 namespace MedicalConsultation.Entity.Consultation
 {
-    public class ConsultationEntity : Entity
+    public class ConsultationEntity : BasicEntity
     {
-        public int Id { get; set; }
+        //public int Id { get; set; }
         public int PacienteId { get; set; }
         public int MedicoId { get; set; }
         public DateTime Date { get; set; }
@@ -21,7 +21,7 @@ namespace MedicalConsultation.Entity.Consultation
             get;
             private set;
         }
-        public virtual PatientEntity Paciente { get; set; }
+        public virtual UserEntity Paciente { get; set; }
         public virtual MedicalDoctorEntity Medico { get; set; }
 
         public void SetStatus(ConsultationStatus status)
@@ -40,7 +40,7 @@ namespace MedicalConsultation.Entity.Consultation
 
             Validate();
         }
-        public ConsultationEntity(int pacienteId, int medicoId, DateTime date, ConsultationStatus status, DateTime? dataStatus)
+        public ConsultationEntity(int pacienteId, int medicoId, DateTime date, ConsultationStatus status, DateTime? dataStatus): base()
         {
             PacienteId = pacienteId;
             MedicoId = medicoId;
@@ -51,7 +51,8 @@ namespace MedicalConsultation.Entity.Consultation
             Validate();
         }
 
-        public ConsultationEntity(int id, PatientEntity paciente, MedicalDoctorEntity medico, DateTime date, ConsultationStatus status, DateTime? dataStatus) : this(id, paciente.Id, medico.Id, date, status, dataStatus)
+        public ConsultationEntity(int id, UserEntity paciente, MedicalDoctorEntity medico, DateTime date, ConsultationStatus status, DateTime? dataStatus) 
+            : this(id, paciente.Id, medico.Id, date, status, dataStatus)
         {
             Paciente = paciente;
             Medico = medico;
@@ -59,7 +60,7 @@ namespace MedicalConsultation.Entity.Consultation
             Validate();
         }
 
-        public ConsultationEntity(PatientEntity paciente, MedicalDoctorEntity medico, DateTime date, ConsultationStatus status, DateTime? dataStatus) : this(paciente.Id, medico.Id, date, status, dataStatus)
+        public ConsultationEntity(UserEntity paciente, MedicalDoctorEntity medico, DateTime date, ConsultationStatus status, DateTime? dataStatus) : this(paciente.Id, medico.Id, date, status, dataStatus)
         {
             Paciente = paciente;
             Medico = medico;

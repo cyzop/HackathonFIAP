@@ -63,5 +63,10 @@ namespace MedicalConsultation.Gateways
         {
             return _consultationRepository.ConsultarPorMedicoNoPeriodo(medicoId, horarioInicio, horarioFim);
         }
+
+        public ConsultationEntity ObterPorId(int idConsulta)
+        {
+            return _consultationRepository.ConsultarPorId(idConsulta);
+        }
     }
 }

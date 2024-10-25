@@ -1,6 +1,7 @@
 ﻿using MedicalConsultation.Entity;
 using MedicalConsultation.Entity.Consultation;
 using MedicalConsultation.Interfaces.Repository;
+using Microsoft.EntityFrameworkCore;
 
 namespace MedicalConsultation.Repository
 {
@@ -10,43 +11,79 @@ namespace MedicalConsultation.Repository
         {
         }
 
+        public override ConsultationEntity ConsultarPorId(int id)
+        {
+            return _context.Consultas
+                .Where(c => c.Id == id)
+                .Include(c => c.Medico)
+                        .Include(c => c.Medico.Usuario)
+                .Include(c=>c.Paciente)
+                        .FirstOrDefault();
+        }
+
         public IEnumerable<ConsultationEntity> ConsultarPorMedico(int id)
         {
-            return _context.Consultas.Where(c => c.MedicoId == id)?.ToList();
+            return _context.Consultas
+                .Where(c => c.MedicoId == id)?
+                .Include(c => c.Paciente)
+                .Where(c => c.Paciente.Ativo)
+                .ToList();
         }
 
         public IEnumerable<ConsultationEntity> ConsultarPorMedicoNoStatus(int id, ConsultationStatus status)
         {
-            return _context.Consultas.Where(c => c.MedicoId == id &&
-                c.Status == status)?.ToList();
+            return _context.Consultas
+                .Where(c => c.MedicoId == id && c.Status == status)?
+                .Include(c => c.Paciente)
+                .Where(c => c.Paciente.Ativo)
+                .ToList();
         }
 
         public IEnumerable<ConsultationEntity> ConsultarPorMedicoNaData(int id, DateTime data)
         {
-            return _context.Consultas.Where(c => c.MedicoId == id && c.Date == data)?.ToList();
+            var retorno =  _context.Consultas
+                            .Where(c => c.MedicoId == id && c.Date == data)?
+                            .Include(c=>c.Paciente)
+                            .Where(c=>c.Paciente.Ativo)
+                            .ToList();  
+
+            return retorno;
         }
 
         public IEnumerable<ConsultationEntity> ConsultarPorPaciente(int id)
         {
-            return _context.Consultas.Where(c => c.PacienteId == id)?.ToList();
+            return _context.Consultas
+                                .Where(c => c.PacienteId == id)?
+                                .Include(c => c.Medico)
+                                .Include(c => c.Medico.Usuario)
+                                .ToList();
         }
 
         public IEnumerable<ConsultationEntity> ConsultarPorPacienteNoStatus(int id, ConsultationStatus status)
         {
-            return _context.Consultas.Where(c => c.PacienteId == id &&
-                c.Status == status)?.ToList();
+            return _context.Consultas
+                            .Where(c => c.PacienteId == id && c.Status == status)?
+                            .Include(c => c.Medico)
+                            .Include(c => c.Medico.Usuario)
+                            .ToList();
         }
 
         public IEnumerable<ConsultationEntity> ConsultarPorMedicoAPartirDe(int medicoId, DateTime dataInicio)
         {
-            return _context.Consultas.Where(c => c.MedicoId == medicoId &&
-               c.Date >= dataInicio)?.ToList();
+            return _context.Consultas
+                                .Where(c => c.MedicoId == medicoId &&c.Date >= dataInicio)?
+                                .Include(c => c.Paciente)
+                                .Where(c => c.Paciente.Ativo)
+                                .ToList();
         }
 
         public IEnumerable<ConsultationEntity> ConsultarPorPacienteAPartirDe(int pacienteId, DateTime dataInicio)
         {
-            return _context.Consultas.Where(c => c.PacienteId == pacienteId &&
-             c.Date >= dataInicio)?.ToList();
+            return _context.Consultas
+                            .Where(c => c.PacienteId == pacienteId && c.Date >= dataInicio)
+                            .Include(c => c.Medico)
+                            .Include(c => c.Medico.Usuario)
+                            .ToList();
         }
 
         public IEnumerable<ConsultationEntity> ConsultarPorPacienteNoPeriodo(int pacienteId, DateTime? horarioInicio, DateTime? horarioFim)
@@ -61,7 +98,10 @@ namespace MedicalConsultation.Repository
             if (horarioFim.HasValue)
                 consultas = consultas.Where(c => c.Date <= horarioFim.Value);
 
-            return consultas?.ToList();
+            return consultas
+                        .Include(c => c.Medico)
+                        .Include(c => c.Medico.Usuario)
+                        .ToList();
         }
 
         public IEnumerable<ConsultationEntity> ConsultarPorMedicoNoPeriodo(int medicoId, DateTime? horarioInicio, DateTime? horarioFim)

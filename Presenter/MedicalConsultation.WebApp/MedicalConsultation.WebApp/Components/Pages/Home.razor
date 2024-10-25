@@ -1,21 +1,112 @@
 ﻿@page "/"
 
+@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@using MedicalConsultation.Shared;
+@using Newtonsoft.Json
+@using MedicalConsultation.WebApp.Services
+
+
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject HttpClient Http
+@inject IJSRuntime JSRuntime;
+@inject UsuarioService UsuarioService
+@inject NavigationManager NavigationManager
+@inject IHttpClientFactory HttpClientFactory
+
+
 <PageTitle>Página Inicial</PageTitle>
 
 <h1> Sistema de Agendamento de Consultas</h1>
 <br>
-
-Seja bem vindo!
+ <AuthorizeView>
+<Authorized>
+@if (UsuarioService?.Id >0)
+{
+    <h3>Seja bem vindo, @UsuarioService?.Nome!</h3>
+}
+else
+{
+    <h3>Seja bem vindo!</h3>
+}
+</Authorized>
+</AuthorizeView>
 <br><br><br>
 
- <div class="nav-item px-3">
-    <NavLink class="nav-link" href="schedules" >
-        <img class="bi oi" src="https://img.icons8.com/?size=100&id=28WzaxCdZhVK&format=png&color=000000"/> Agendamentos realizados
-    </NavLink>
-</div>
+ <AuthorizeView>
+        <Authorized>
+            <div class="icon-container">
+             <div class="nav-item px-3">
+                <NavLink class="nav-link" href="schedules" >
+                    <img class="bi oi" src="https://img.icons8.com/?size=100&id=28WzaxCdZhVK&format=png&color=000000"/> Minhas Consultas
+                </NavLink>
+            </div>
+             @if (isAuthenticated && UsuarioService.Medico)
+             {
+                <div class="nav-item px-3">
+                     <NavLink href="/doctorschedules" class="nav-link">
+                     <img class="bi" src="https://img.icons8.com/?size=100&id=3Ct72x2Fd7mT&format=png&color=000000" />  Calendário Médico
+                    </NavLink>
+                </div>
+            }
+            </div>
+        </Authorized>
+</AuthorizeView>
 
-<div class="nav-item px-3">
-    <NavLink class="nav-link" href="teste">
-        <img class="bi oi" src="https://img.icons8.com/?size=100&id=28WzaxCdZhVK&format=png&color=000000" /> Teste
-    </NavLink>
-</div>
+@code{
+    private HttpClient _httpClient;
+    private bool _initialized;
+    private bool isAuthenticated;
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            NavigationManager.NavigateTo("/auth");
+        }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (!_initialized)
+        {
+            _initialized = true;
+            var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+            var user = authState.User;
+            isAuthenticated = user.Identity.IsAuthenticated;
+            if (user.Identity.IsAuthenticated)
+            {
+                //if (UsuarioService?.Id <=0)
+               // {
+                    try
+                    {
+                        var email = user.Identity.Name;
+                        var url = $"User/{email}";
+                        _httpClient = HttpClientFactory.CreateClient("UserApi");
+                        var response = await _httpClient.GetAsync(url);
+
+                        if (response.IsSuccessStatusCode &&
+                            response.StatusCode == System.Net.HttpStatusCode.OK)
+                        {
+                            string content = await response.Content.ReadAsStringAsync();
+                            UserDao usuario = JsonConvert.DeserializeObject<UserDao>(content);
+                            if (usuario?.Ativo != null)
+                            {
+                                UsuarioService.SetUsuario(usuario.Id, usuario.Name, usuario.Email, usuario.Ativo, usuario.EhMedico);
+                                StateHasChanged();//atualizar tela
+                            }
+                        }
+                        else
+                        {
+                            var erro = await response.Content.ReadAsStringAsync();
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        JSRuntime.InvokeAsync<bool>("alert", $"Err {ex.Message}");
+                    }
+              //  }
+            }
+        }
+    }
+}

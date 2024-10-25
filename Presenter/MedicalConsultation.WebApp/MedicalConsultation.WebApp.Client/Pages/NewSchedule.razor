@@ -1,11 +1,14 @@
 ﻿@page "/newschedule"
 @using MedicalConsultation.WebApp.Client.Extensions
 @using MedicalConsultation.Shared;
+@using MedicalConsultation.WebApp.Services
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 @using System.Globalization
 @using System.ComponentModel.DataAnnotations
 @using Bit.BlazorUI
 @using Microsoft.AspNetCore.Authorization
+@using Newtonsoft.Json
+@using System.Text
 @using static System.Net.WebRequestMethods
 
 @attribute [Authorize]
@@ -29,54 +32,56 @@
 else
 {
     <EditForm Model="model" OnValidSubmit="PostEntidade">
-        @if (model.MedicalDoctor != null)
+        @if (medicos != null)
         {
             <div class="form-group mb-3">
-                <label for="ativocode">Ativo</label>
-                <select value="@model.MedicalDoctor.Id" @onchange="OnChangeMedico" class="form-control">
+                <label for="ativocode">Médico</label>
+                <select value="@model.MedicalId" @onchange="OnChangeMedico" class="form-control">
                     <option value=""></option>
                     @foreach (var item in medicos)
                     {
-                        <option value="@item.Id">@item.Name</option>
+                        <option value="@item.Id">@item.Name (@item.Especialidade)</option>
                     }
                 </select>
             </div>
         }
-        @if(data != null){
+        @if(data > DateTime.MinValue){
              <div class="form-group mb-3">
                 <label for="ativocode">Data</label>
-                <input type="date" id="calendar" class="form-control bi" @bind="data" />
+                <input type="date" id="calendar" min="@DateTime.Today.ToString("yyyy-MM-dd")" class="form-control bi" @bind="data" />
+                @* <InputDate @bind-Value="data" class="form-control" id="entidadeData" /> *@
             </div>
         }
 
         @if(horarios != null)
         {
             <div class="form-group mb-3">
-                <label for="ativocode">Horários</label>
+                <label for="ativocode">Horário</label>
                 <select value="@model.Id" @onchange="OnChangeHorario" class="form-control">
                     <option value=""></option>
                     @foreach (var item in horarios)
                     {
-                        <option value="@item.Id">@item.Date</option>
+                        <option value="@item">@item</option>
                     }
                 </select>
             </div>
         }
         <DataAnnotationsValidator />
         <ValidationSummary />
-
         <button class="btn btn-success" type="submit">Confirmar</button>
         <button class="btn btn-secondary" @onclick="Voltar" type="button">Cancelar</button>
     </EditForm>
 }
 
-
 @code {
     private MedicalDoctorDao[]? medicos;
-    private MedicalDoctorScheduleDao[]? horarios;
-    private ScheduleDao model = new();
+    private string[]? horarios;
+    private ConsultationDao model = new();
     private DateTime data;
+    private string hora;
     private HttpClient _httpClient;
+    private bool _initialized;
+    private PatientDao paciente;
 
     private void Voltar()
     {
@@ -85,25 +90,57 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        try
+        if (!_initialized)
         {
-            var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-            var user = authState.User;
-            if (user.Identity.IsAuthenticated)
+            _initialized = true;
+            data = DateTime.Now.AddDays(1);
+            try
             {
-                _httpClient = HttpClientFactory.CreateClient("MedicalDoctorApi");
-                medicos = await _httpClient.GetFromJsonAsync<MedicalDoctorDao[]>("listar");
-                data = DateTime.Now;
+                var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+                var user = authState.User;
+                if (user.Identity.IsAuthenticated)
+                {
+                    _httpClient = HttpClientFactory.CreateClient("MedicalDoctorApi");
+                    var medicosResponse = await _httpClient.GetAsync("medicaldoctor/listar");
+                    if (medicosResponse.IsSuccessStatusCode && medicosResponse.StatusCode == System.Net.HttpStatusCode.OK)
+                    {
+                        string content = await medicosResponse.Content.ReadAsStringAsync();
+                        medicos = JsonConvert.DeserializeObject<MedicalDoctorDao[]>(content);
+                    }
+                    else
+                        medicos = new MedicalDoctorDao[0];
+
+                    if (horarios == null)
+                        GerarHorarios();
+
+                    if (paciente == null)
+                    {
+                        _httpClient = HttpClientFactory.CreateClient("PatientApi");
+                        var url = $"Patient/{user.Identity.Name}";
+                        var response = await _httpClient.GetAsync(url);
+                        if (response.IsSuccessStatusCode && response.StatusCode == System.Net.HttpStatusCode.OK)
+                        {
+                            string content = await response.Content.ReadAsStringAsync();
+                            paciente = JsonConvert.DeserializeObject<PatientDao>(content);
+                            model.PatientId = paciente.Id;
+                        }
+                    }
+                }
+            }
+            catch (AccessTokenNotAvailableException exception)
+            {
+                exception.Redirect();
+            }
+            catch (Exception ex)
+            {
+                JSRuntime.InvokeAsync<bool>("prompt", $"Erro {ex.Message}");
             }
         }
-        catch (AccessTokenNotAvailableException exception)
-        {
-            exception.Redirect();
-        }
-        catch (Exception ex)
-        {
-            JSRuntime.InvokeAsync<bool>("prompt", $"Erro {ex.Message}");
-        }
+    }
+
+    private void GerarHorarios()
+    {
+        horarios = TimeService.GerarHorariosConsulta();
     }
 
     private void OnChangeMedico(ChangeEventArgs args)
@@ -111,8 +148,8 @@ else
         if (args.Value != null)
         {
             var medicoId = args.Value.ToString();
-
-            //AtualizaHorarios();
+            if(!string.IsNullOrEmpty(medicoId))
+                model.MedicalId = int.Parse(medicoId);
         }
     }
 
@@ -120,24 +157,40 @@ else
     {
         if (args.Value != null)
         {
-            //var medicoId = args.Value.ToString();
-
-            //AtualizaHorarios();
-        }
+            hora = args.Value.ToString();            
+        }        
     }
 
     async Task PostEntidade()
     {
-        DateTime date = DateTime.Now;
-        string strAgendamento = date.ToString("dd/MM/yyyy HH:mm");
-        bool confirmed = await JSRuntime.InvokeAsync<bool>("confirm", $"Confirma o agendamento da consulta para {strAgendamento}?");
+        if (data.DayOfWeek == DayOfWeek.Sunday)
+        {
+            // Exibir mensagem de erro ou tomar outra ação
+            JSRuntime.InvokeAsync<bool>("alert", $"Não é permitido marcação de consulta aos domingos.");
+            return;
+        }
+
+        if (DateTime.TryParse(hora, out var parsedHora))
+            model.Date = data.Date.Add(parsedHora.TimeOfDay);
+
+        if (model.Date <= DateTime.Today)
+        {
+            JSRuntime.InvokeAsync<bool>("alert", $"Informe uma data e horário para a marcação da consulta.");
+            return;
+        }
+
+        string strAgendamento = model.Date.ToString("dd/MM/yyyy HH:mm");
+        bool confirmed = await JSRuntime.InvokeAsync<bool>("confirm", $"Confirma o agendamento de consulta para o paciente {paciente.Name} em {strAgendamento}?");
         if (confirmed is false)
             return;
-
-        // var response = await Http.PostAsJsonAsync("Schecule", model);
-        // if (response.IsSuccessStatusCode)
-        //     Voltar();
-        // else
-        //     JSRuntime.InvokeAsync<bool>("alert", $"Falha na operação {response.StatusCode}");
+        
+        _httpClient = HttpClientFactory.CreateClient("ConsultationApi");
+        var content = new StringContent(System.Text.Json.JsonSerializer.Serialize(model), Encoding.UTF8, "application/json");
+        var agendamentoResponse = await _httpClient.PostAsync("consultation/Cadastrar", content);
+        if (agendamentoResponse.IsSuccessStatusCode && agendamentoResponse.StatusCode == System.Net.HttpStatusCode.OK)
+            Voltar();
+        else
+            JSRuntime.InvokeAsync<bool>("alert", $"Falha na operação {agendamentoResponse.StatusCode}");
+       
     }
 }

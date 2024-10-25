@@ -1,13 +1,26 @@
 ﻿@page "/auth"
 
 @using Microsoft.AspNetCore.Authorization
+@using MedicalConsultation.WebApp.Services
 
 @attribute [Authorize]
 @rendermode InteractiveAuto
 
+@inject UsuarioService UsuarioService 
+
 <PageTitle>Auth</PageTitle>
 
-<h1>Você está autenticado</h1>
+<h1> Sistema de Agendamento de Consultas</h1>
+<br>
+@if (UsuarioService?.Id >0)
+{
+    <h3>Seja bem vindo, @UsuarioService?.Nome!</h3>
+}
+else
+{
+    <h3>Seja bem vindo!</h3>
+}
+
 
 <AuthorizeView>
     Hello @context.User.Identity?.Name!

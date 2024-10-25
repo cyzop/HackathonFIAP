@@ -1,13 +1,21 @@
-﻿using MedicalConsultation.Entity.Patient;
+﻿using MedicalConsultation.Entity;
+using MedicalConsultation.Entity.Patient;
 using MedicalConsultation.Shared;
 
 namespace MedicalConsultation.Api.Converter
 {
-    public class PatientEntityConverter : IEntityConverter<PatientEntity, PatientDao>
+    public class PatientEntityConverter : IEntityConverter<UserEntity, PatientDao>
     {
-        public PatientDao Convert(PatientEntity entity)
+        public PatientDao Convert(UserEntity entity)
         {
-            throw new NotImplementedException();
+            return entity!=null ? new PatientDao()
+            {
+                Id = entity.Id,
+                Name = entity.Name,
+                Email = entity.Email,
+                cpf = entity.CPF,
+                Ativo = entity.Ativo
+            } : null;
         }
     }
 }

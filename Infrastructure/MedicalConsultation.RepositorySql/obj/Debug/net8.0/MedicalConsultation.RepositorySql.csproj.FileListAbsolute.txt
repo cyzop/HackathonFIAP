@@ -1,0 +1,6 @@
+C:\WORK\DADOS\ALURA\Hackathon\HackathonFIAP\Infrastructure\MedicalConsultation.RepositorySql\obj\Debug\net8.0\MedicalConsultation.RepositorySql.csproj.AssemblyReference.cache
+C:\WORK\DADOS\ALURA\Hackathon\HackathonFIAP\Infrastructure\MedicalConsultation.RepositorySql\obj\Debug\net8.0\MedicalConsultation.RepositorySql.GeneratedMSBuildEditorConfig.editorconfig
+C:\WORK\DADOS\ALURA\Hackathon\HackathonFIAP\Infrastructure\MedicalConsultation.RepositorySql\obj\Debug\net8.0\MedicalConsultation.RepositorySql.AssemblyInfoInputs.cache
+C:\WORK\DADOS\ALURA\Hackathon\HackathonFIAP\Infrastructure\MedicalConsultation.RepositorySql\obj\Debug\net8.0\MedicalConsultation.RepositorySql.AssemblyInfo.cs
+C:\WORK\DADOS\ALURA\Hackathon\HackathonFIAP\Infrastructure\MedicalConsultation.RepositorySql\obj\Debug\net8.0\MedicalConsultation.RepositorySql.csproj.CoreCompileInputs.cache
+C:\WORK\DADOS\ALURA\Hackathon\HackathonFIAP\Infrastructure\MedicalConsultation.RepositorySql\obj\Debug\net8.0\MedicalConsultation.RepositorySql.sourcelink.json

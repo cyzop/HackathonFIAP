@@ -23,22 +23,26 @@ namespace MedicalConsultation.Controller
         public MedicalDoctorEntity Alterar(MedicalDoctorEntity entity)
         { 
             var registroBase = _doctorGateway.ObterPorId(entity.Id);
-            var registroPorEmail = _doctorGateway.ObterPorEmail(entity.Email);
+            MedicalDoctorEntity registroPorEmail = _doctorGateway.ObterPorEmail(entity.Usuario.Email);
             var useCase = new UpdateMedicalDoctorUseCase(entity, registroBase, registroPorEmail);
 
             useCase.VerificarExistente();
 
-            registroBase.SetEmail(entity.Email);
-            registroBase.SetCrm(entity.CRM);
-            registroBase.SetName(entity.Name);
             registroBase.SetEspecialidade(entity.Especialidade);
+            registroBase.SetCrm(entity.CRM);
 
-            return _doctorGateway.AtualizarMedico(entity);
+            registroBase.Usuario.SetName(entity.Usuario.Name);
+            registroBase.Usuario.SetCpf(entity.Usuario.CPF);
+            registroBase.Usuario.SetEmail(entity.Usuario.Email);
+            
+
+            return _doctorGateway.AtualizarMedico(registroBase);
         }
 
         public MedicalDoctorEntity Incluir(MedicalDoctorEntity entity)
         {
-            var registroBase = _doctorGateway.ObterPorEmail(entity.Email);
+            var registroBase = _doctorGateway.ObterPorEmail(entity.Usuario.Email);
+            //var registroBase = _doctorGateway.ObterPorId(entity.Id);
             var useCase = new IncludeMedicalDoctorUseCase(entity, registroBase);
 
             var obj = useCase.VerificarExistente();

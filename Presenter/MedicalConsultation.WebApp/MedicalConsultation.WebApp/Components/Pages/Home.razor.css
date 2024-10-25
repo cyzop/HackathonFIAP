@@ -7,3 +7,9 @@
     top: -1px;
     background-size: cover;
 }
+
+.icon-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}

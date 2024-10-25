@@ -1,9 +1,13 @@
-﻿using MedicalConsultation.Entity.Patient;
+﻿using MedicalConsultation.Entity;
+using MedicalConsultation.Entity.Patient;
 using MedicalConsultation.Interfaces.Repository;
+using Microsoft.EntityFrameworkCore;
 
 namespace MedicalConsultation.Repository
 {
     public class PatientRepository : EFRepository<PatientEntity>, IPatientRepository
+    //public class PatientRepository : PersonRepository<UserEntity>, IPatientRepository
+   
     {
         public PatientRepository(ApplicationDbContext context) : base(context)
         {
@@ -11,9 +15,20 @@ namespace MedicalConsultation.Repository
 
         public PatientEntity ConsultarPorEmail(string email)
         {
-            return _context.Pacientes
-                .Where(p=>p.Email.ToLower() == email.ToLower())
-                .FirstOrDefault();
+            try
+            {
+                var user = _context.Usuarios.Where(u => u.Email.ToLower() == email.ToLower()).FirstOrDefault();
+                var patientEntity = user as PatientEntity;
+
+                return (PatientEntity)user;
+            }
+            catch (Exception ex)
+            {
+                var err = ex.Message;
+            }
+            return null;
+
         }
+
     }
 }

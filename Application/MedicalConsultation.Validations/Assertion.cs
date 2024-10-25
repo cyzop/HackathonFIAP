@@ -78,7 +78,7 @@ namespace MedicalConsultation.Validations
             if(date == DateTime.MinValue)
                 throw new ArgumentException(message);
         }
-        public static void AssertDataIsNullOrInvalid(DateTime date, DateTime minValue, string message)
+        public static void AssertIfDataIsGreaterThanOrEquals(DateTime date, DateTime minValue, string message)
         {
             if (date < minValue)
                 throw new ArgumentException(message);

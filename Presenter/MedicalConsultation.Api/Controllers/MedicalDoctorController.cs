@@ -13,15 +13,18 @@ namespace MedicalConsultation.Api.Controllers
         private readonly ILogger<MedicalDoctorController> _logger;
         private readonly IMedicalDoctorController _controller;
         private readonly IDaoConverter<MedicalDoctorDao, MedicalDoctorEntity> _daoConverter;
+        private readonly IEntityConverter<MedicalDoctorEntity, MedicalDoctorDao> _entityConverter;
 
         public MedicalDoctorController(ILogger<MedicalDoctorController> logger,
             IMedicalDoctorController controller,
             IDaoConverter<MedicalDoctorDao,
-            MedicalDoctorEntity> daoConverter)
+            MedicalDoctorEntity> daoConverter,
+            IEntityConverter<MedicalDoctorEntity, MedicalDoctorDao> entityConverter)
         {
             _logger = logger;
             _controller = controller;
             _daoConverter = daoConverter;
+            _entityConverter = entityConverter;
         }
 
         [HttpGet("Listar")]
@@ -38,7 +41,9 @@ namespace MedicalConsultation.Api.Controllers
                 _logger.LogInformation("Get Medicos Ativos length {quantidade}", quantidade);
 
                 if (ativos?.Count() > 0)
-                    return Ok(ativos);
+                    return Ok(ativos
+                            .Select(p => _entityConverter.Convert(p))?
+                            .ToList());
                 else
                     return StatusCode(StatusCodes.Status204NoContent);//NoContent
             }

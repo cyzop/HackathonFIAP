@@ -23,21 +23,24 @@ namespace MedicalConsultation.Api.Controllers
             _entityConverter = entityConverter;
         }
 
-        [HttpGet("ListarPorMedico/{id}")]
+        [HttpGet("ListarPorMedico/{email}")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<ConsultationDao>))]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> GetConsultasMedico(int id)
+        public async Task<IActionResult> GetConsultasMedico(string email)
         {
             try
             {
-                var ativos = _consultationController.ListarPorMedicoAPartirDe(id, DateTime.Now);
+                var ativos = _consultationController.ListarPorMedicoAPartirDe(email, DateTime.Now);
                 var quantidade = ativos?.Count() ?? 0;
 
                 _logger.LogInformation("Get Consultas p/ Medico length {quantidade}", quantidade);
 
                 if (ativos?.Count() > 0)
-                    return Ok(ativos);
+                {
+                    var result = ativos.Select(e => _entityConverter.Convert(e)).ToList();
+                    return Ok(result);
+                }
                 else
                     return StatusCode(StatusCodes.Status204NoContent);//NoContent
             }
@@ -47,21 +50,24 @@ namespace MedicalConsultation.Api.Controllers
                 return BadRequest(ex.Message);
             }
         }
-        [HttpGet("ListarPorPaciente/{id}")]
+        [HttpGet("ListarPorPaciente/{email}")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<ConsultationDao>))]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> GetConsultasPaciente(int id)
+        public async Task<IActionResult> GetConsultasPaciente(string email)
         {
             try
             {
-                var ativos = _consultationController.ListarPorPacienteAPartirDe(id, DateTime.Now);
+                var ativos = _consultationController.ListarPorPacienteAPartirDe(email, DateTime.Now);
                 var quantidade = ativos?.Count() ?? 0;
 
                 _logger.LogInformation("Get Consultas p/ Paciente length {quantidade}", quantidade);
 
                 if (ativos?.Count() > 0)
-                    return Ok(ativos.Select(e=>_entityConverter.Convert(e)).ToList());
+                {
+                    var result = ativos.Select(e => _entityConverter.Convert(e)).ToList();  
+                    return Ok(result);
+                }
                 else
                     return StatusCode(StatusCodes.Status204NoContent);//NoContent
             }
@@ -90,6 +96,33 @@ namespace MedicalConsultation.Api.Controllers
             ConsultationEntity entity = _daoConverter.Convert(consulta);
             var result = _consultationController.Alterar(entity);
             return Ok(consulta);
+        }
+
+        [HttpPost("Cancelar")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> CancelarConsulta(int idConsulta)
+        {
+            bool result = _consultationController.Cancelar(idConsulta);
+            if (result)
+                return Ok();
+            else
+                return BadRequest();
+        }
+        [HttpGet("Consultar/{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ConsultationDao))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> GetConsulta(int id)
+        {
+            _logger.LogInformation("Get Consulta {id}" , id);
+            var consulta = _consultationController.ListarPorId(id);
+            if (consulta!=null)
+            {
+                var result =  _entityConverter.Convert(consulta);
+                return Ok(result);
+            }
+            else
+                return StatusCode(StatusCodes.Status204NoContent);
         }
     }
 }

@@ -1,6 +1,6 @@
 ﻿namespace MedicalConsultation.Entity.Schedule
 {
-    public class TimeEntity : Entity
+    public class TimeEntity : BasicEntity
     {
         public DayOfWeek DiaDaSemana { get; 
             private set; }

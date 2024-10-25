@@ -16,9 +16,9 @@ namespace MedicalConsultation.UseCases.MedicalDoctor
 
         public MedicalDoctorEntity VerificarExistente()
         {
-            if (_medicoByEmail!=null && !_medicoByEmail.Ativo)
+            if (_medicoByEmail!=null && !_medicoByEmail.Usuario.Ativo)
             {
-                _medicoByEmail.SetAtivo(true);
+                _medicoByEmail.Usuario.SetAtivo(true);
                 return _medicoByEmail;
             }
             else

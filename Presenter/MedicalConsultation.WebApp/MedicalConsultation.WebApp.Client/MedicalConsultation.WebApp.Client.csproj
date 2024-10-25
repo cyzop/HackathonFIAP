@@ -24,10 +24,17 @@
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.8" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Authentication" Version="8.0.8" />
     <PackageReference Include="Microsoft.Extensions.Http" Version="8.0.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\MedicalConsultation.Shared\MedicalConsultation.Shared.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Update="Pages\DoctorSchedules.razor">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+    </Content>
   </ItemGroup>
 
 </Project>

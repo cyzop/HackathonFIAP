@@ -1,4 +1,5 @@
 ﻿using MedicalConsultation.Api.Converter;
+using MedicalConsultation.Entity;
 using MedicalConsultation.Entity.Patient;
 using MedicalConsultation.Interfaces.Controller;
 using MedicalConsultation.Shared;
@@ -11,14 +12,16 @@ namespace MedicalConsultation.Api.Controllers
     public class PatientController : ControllerBase
     {
         private readonly ILogger<PatientController> _logger;
-        private readonly IPatientController _controller;
-        private readonly IDaoConverter<PatientDao, PatientEntity> _daoConverter;
+        private readonly IUserController _controller;
+        private readonly IDaoConverter<PatientDao, UserEntity> _daoConverter;
+        private readonly IEntityConverter<UserEntity, PatientDao> _entityConverter;
 
-        public PatientController(ILogger<PatientController> logger, IPatientController controller, IDaoConverter<PatientDao, PatientEntity> daoConverter)
+        public PatientController(ILogger<PatientController> logger, IUserController controller, IDaoConverter<PatientDao, UserEntity> daoConverter, IEntityConverter<UserEntity, PatientDao> entityConverter)
         {
             _logger = logger;
             _controller = controller;
             _daoConverter = daoConverter;
+            _entityConverter = entityConverter;
         }
 
         [HttpGet("Listar")]
@@ -35,7 +38,11 @@ namespace MedicalConsultation.Api.Controllers
                 _logger.LogInformation("Get Pacientes length {quantidade}", quantidade);
 
                 if (ativos?.Count() > 0)
-                    return Ok(ativos);
+                {
+                    return Ok(ativos
+                            .Select(p => _entityConverter.Convert(p))?
+                            .ToList());
+                }
                 else
                     return StatusCode(StatusCodes.Status204NoContent);//NoContent
             }
@@ -51,7 +58,7 @@ namespace MedicalConsultation.Api.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> CadastrarPaciente(PatientDao paciente)
         {
-            PatientEntity entity = _daoConverter.Convert(paciente);
+            UserEntity entity = _daoConverter.Convert(paciente);
             var result = _controller.Incluir(entity);
             return Ok(paciente);
         }
@@ -61,7 +68,7 @@ namespace MedicalConsultation.Api.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> AlterarPaciente(PatientDao paciente)
         {
-            PatientEntity entity = _daoConverter.Convert(paciente);
+            UserEntity entity = _daoConverter.Convert(paciente);
             var result = _controller.Alterar(entity);
             return Ok(paciente);
         }
@@ -83,7 +90,8 @@ namespace MedicalConsultation.Api.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetPaciente(string email)
         {
-            var result = _controller.ObterUsuarioPorEmail(email);
+            var patient = _controller.ObterUsuarioPorEmail(email);
+            var result = _entityConverter.Convert(patient);
             if (result!=null)
                 return Ok(result);
             else

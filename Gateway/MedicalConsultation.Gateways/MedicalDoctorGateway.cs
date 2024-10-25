@@ -28,7 +28,6 @@ namespace MedicalConsultation.Gateways
         {
             return _medicalDoctorRepository.ConsultarPorEmail(email);
         }
-
         public MedicalDoctorEntity ObterPorId(int id)
         {
             return _medicalDoctorRepository.ConsultarPorId(id);
