@@ -33,3 +33,10 @@
 /Presenter/Client
 /Presenter/Server
 /Presenter/Teste
+/MedicalConsultation.Consumer/bin/Debug/net8.0
+/MedicalConsultation.Consumer/obj
+/MedicalConsultation.Mail/bin/Debug/net8.0
+/MedicalConsultation.Mail/obj
+/Presenter/MedicalConsultation.Shared/bin/Debug/net7.0/MedicalConsultation.Shared.dll
+/Tests/MedicalConsultation.Tests/bin/Debug/net8.0
+/Tests/MedicalConsultation.Tests/obj

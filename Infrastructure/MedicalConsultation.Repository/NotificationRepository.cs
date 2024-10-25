@@ -51,7 +51,31 @@ namespace MedicalConsultation.Repository
 
         public ICollection<ConsultationNotificationEntity> ConsultarAtivos()
         {
-            return _context.Notificacoes.ToList();
+            return _context.Notificacoes.
+                Where(n=>n.Ativo)
+                .Include(c => c.Consulta)
+                         .Include(c => c.Consulta.Medico)
+                         .Include(c => c.Consulta.Medico.Usuario)
+                         .Include(c => c.Consulta.Paciente)
+                .ToList();
         }
+
+        public ICollection<ConsultationNotificationEntity> ConsultarPorIdConsultaNaData(int idConsulta, DateTime? data)
+        {
+            var registros = from c in _context.Notificacoes
+                            where c.ConsultaId == idConsulta
+                            select c;
+
+            if (data.HasValue)
+                registros = registros.Where(c => c.Data >= data);
+
+            return registros
+                    .Include(c => c.Consulta)
+                    .Include(c => c.Consulta.Medico)
+                    .Include(c => c.Consulta.Medico.Usuario)
+                    .Include(c => c.Consulta.Paciente)
+                    .ToList();
+        }
+
     }
 }
