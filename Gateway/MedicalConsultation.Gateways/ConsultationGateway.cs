@@ -73,5 +73,6 @@ namespace MedicalConsultation.Gateways
         {
             return _consultationRepository.ConsultarPorData(data);
         }
+
     }
 }
