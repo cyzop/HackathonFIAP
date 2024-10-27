@@ -61,12 +61,18 @@ namespace MedicalConsultation.Tests.Fixture
                 medico?? _medicalDoctorTestFixture.GenerateEntity(),
                 _faker.Date.Future(1, DateTime.Now));
         }
-        public ConsultationEntity GenerateEntity()
+
+        public ConsultationEntity GenerateEntity(DateTime date)
         {
             return GenerateEntity(
                 _patientTestFixture.GenerateEntity(),
                 _medicalDoctorTestFixture.GenerateEntity(),
-                _faker.Date.Future(1, DateTime.Now));
+                date);
+        }
+        public ConsultationEntity GenerateEntity()
+        {
+            var date = _faker.Date.Future(1, DateTime.Now);
+            return GenerateEntity(date);
         }
 
         public ConsultationEntity GenerateEntityWithEmptyPatient()

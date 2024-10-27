@@ -36,7 +36,8 @@ namespace MedicalConsultation.UseCases.Consultation
             Assertion.AssertIsNull(_consultaMesmoHorarioPaciente, Messages.UseCaseValidationMessages.ConsultationValidationMessages.PatientWithConsultationAtTheSameTime);
             Assertion.AssertIsNull(_consultaMesmoHorarioMedico, Messages.UseCaseValidationMessages.ConsultationValidationMessages.MedicalDoctorWithConsultationAtTheSameTime);
 
-            return new ConsultationEntity(_paciente, 
+            return new ConsultationEntity(_novaConsulta.Id,
+                _paciente, 
                 _medico, 
                 _novaConsulta.Date, 
                 ConsultationStatus.Agendada, 

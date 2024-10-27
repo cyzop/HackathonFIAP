@@ -17,7 +17,7 @@ namespace MedicalConsultation.UseCases.Consultation
         public ConsultationEntity VerificarCancelamento()
         {
             Assertion.AssertIsNotNull(_consultaMarcada, ConsultationValidationMessages.ConsultationNotFound);
-            Assertion.AssertIfDataIsGreaterThanOrEquals(_consultaMarcada.Date, DateTime.Now, ConsultationValidationMessages.ConsultationDateHasPasses);
+            Assertion.AssertIfDateIsGreaterThanOrEquals(_consultaMarcada.Date, DateTime.Now, ConsultationValidationMessages.ConsultationDateHasPasses);
 
             return new ConsultationEntity(_consultaMarcada.Id, 
                 _consultaMarcada.Paciente, 
