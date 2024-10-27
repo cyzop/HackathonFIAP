@@ -2,6 +2,6 @@
 {
     public class UserDao : PatientDao
     {
-        public bool EhMedico { get; set; }
+        public bool EhMedico { get; set; } = false;
     }
 }
