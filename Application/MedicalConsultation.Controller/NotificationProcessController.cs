@@ -47,7 +47,7 @@ namespace MedicalConsultation.Controller
             string dataConsulta = notification.Consulta.Date.ToString("dd/MM/yyyy HH:mm:ss");
             string status = notification.Consulta.Status.ToString();
 
-            //enviar email
+            //gerar mensagem
             string body = string.Empty;
             if (string.IsNullOrEmpty(notification.Message))
                 body = string.Format(htmlTemplate, nomeMedico, nomeMedico, dataConsulta, status);

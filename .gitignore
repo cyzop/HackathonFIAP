@@ -44,3 +44,10 @@
 /MedicalConsultation.Consumer - Copia/obj
 /Presenter/MedicalConsultationNotification.Api/bin/Debug/net8.0
 /Presenter/MedicalConsultationNotification.Api/obj
+/Application/MedicalConsultation.Consumer/bin/Debug/net8.0
+/Application/MedicalConsultation.Consumer/obj
+/bin/Debug
+/Infrastructure/MedicalConsultation.Mail/bin/Debug/net8.0
+/Infrastructure/MedicalConsultation.Mail/obj
+/MedicalConsultation.Consumer - Copia
+/obj

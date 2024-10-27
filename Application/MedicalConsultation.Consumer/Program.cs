@@ -16,7 +16,6 @@ var builder = Host.CreateApplicationBuilder(args);
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
     options.UseSqlServer(config.GetConnectionString("ConnectionString"));
-    //options.UseLazyLoadingProxies();
 }, ServiceLifetime.Scoped);
 
 builder.Services.AddHostedService<Worker>();

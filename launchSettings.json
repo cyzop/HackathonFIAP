@@ -1,0 +1,13 @@
+{
+  "profiles": {
+    "Docker Compose": {
+      "commandName": "DockerCompose",
+      "commandVersion": "1.0",
+      "serviceActions": {
+        "medicalconsultation.consumer": "StartDebugging",
+        "medicalconsultation.api": "StartDebugging",
+        "medicalconsultationnotification.api": "StartDebugging"
+      }
+    }
+  }
+}

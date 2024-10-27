@@ -31,7 +31,7 @@ namespace MedicalConsultation.Controller
         {
             DateTime dataVerificacaoConsulta = DateTime.Today.AddDays(1);//amanhã
 
-            //verificar consultas para diaseguinte
+            //verificar consultas para dias eguinte
             List<ConsultationNotificationEntity> notificacoes = new List<ConsultationNotificationEntity>();
             var consultasProximas = _consultationGateway.ObterConsultasPorData(dataVerificacaoConsulta);
             if (consultasProximas?.Count() > 0)

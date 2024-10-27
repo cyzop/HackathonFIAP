@@ -42,7 +42,6 @@ namespace MedicalConsultation.Controller
         public MedicalDoctorEntity Incluir(MedicalDoctorEntity entity)
         {
             var registroBase = _doctorGateway.ObterPorEmail(entity.Usuario.Email);
-            //var registroBase = _doctorGateway.ObterPorId(entity.Id);
             var useCase = new IncludeMedicalDoctorUseCase(entity, registroBase);
 
             var obj = useCase.VerificarExistente();

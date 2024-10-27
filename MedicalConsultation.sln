@@ -41,15 +41,17 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MedicalConsultation.MassTra
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Presenter", "Presenter", "{E01F59D7-CCE5-4CCC-95AC-9958D8116370}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MedicalConsultation.Mail", "MedicalConsultation.Mail\MedicalConsultation.Mail.csproj", "{DA491004-44DE-4A7C-B892-92C2EE353310}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MedicalConsultation.Mail", "Infrastructure\MedicalConsultation.Mail\MedicalConsultation.Mail.csproj", "{DA491004-44DE-4A7C-B892-92C2EE353310}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MedicalConsultation.Consumer", "MedicalConsultation.Consumer\MedicalConsultation.Consumer.csproj", "{5A18095B-FE02-482E-B74B-0DDE41EC0709}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MedicalConsultation.Consumer", "Application\MedicalConsultation.Consumer\MedicalConsultation.Consumer.csproj", "{5A18095B-FE02-482E-B74B-0DDE41EC0709}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{9D26160F-180B-4EE0-A8BC-0B8F9CDFDED2}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MedicalConsultation.Tests", "Tests\MedicalConsultation.Tests\MedicalConsultation.Tests.csproj", "{876BBF8C-5250-4258-AEBB-89B29F84BCF4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MedicalConsultationNotification.Api", "Presenter\MedicalConsultationNotification.Api\MedicalConsultationNotification.Api.csproj", "{5BFC8955-62D2-47A4-8CB8-306440EFFD21}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MedicalConsultationNotification.Api", "Presenter\MedicalConsultationNotification.Api\MedicalConsultationNotification.Api.csproj", "{5BFC8955-62D2-47A4-8CB8-306440EFFD21}"
+EndProject
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{8930ED9F-375E-43C3-80F1-EB92532FB485}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -125,6 +127,10 @@ Global
 		{5BFC8955-62D2-47A4-8CB8-306440EFFD21}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5BFC8955-62D2-47A4-8CB8-306440EFFD21}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5BFC8955-62D2-47A4-8CB8-306440EFFD21}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8930ED9F-375E-43C3-80F1-EB92532FB485}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8930ED9F-375E-43C3-80F1-EB92532FB485}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8930ED9F-375E-43C3-80F1-EB92532FB485}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8930ED9F-375E-43C3-80F1-EB92532FB485}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
