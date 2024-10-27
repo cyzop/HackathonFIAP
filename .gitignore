@@ -51,3 +51,8 @@
 /Infrastructure/MedicalConsultation.Mail/obj
 /MedicalConsultation.Consumer - Copia
 /obj
+/Application/MedicalConsultation.UseCases/bin/Debug/net8.0
+/Application/MedicalConsultation.UseCases/obj
+/Presenter/MedicalConsultation.Shared/bin/Debug/net7.0/MedicalConsultation.Shared.dll
+/Presenter/MedicalConsultation.Shared/bin/Debug/net7.0/MedicalConsultation.Shared.pdb
+/UseCases/MedicalConsultation.UseCases/obj

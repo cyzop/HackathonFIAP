@@ -7,8 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Usecase\MedicalConsultation.UseCases\MedicalConsultation.UseCases.csproj" />
     <ProjectReference Include="..\MedicalConsultation.Interfaces\MedicalConsultation.Interfaces.csproj" />
+    <ProjectReference Include="..\MedicalConsultation.UseCases\MedicalConsultation.UseCases.csproj" />
   </ItemGroup>
 
 </Project>

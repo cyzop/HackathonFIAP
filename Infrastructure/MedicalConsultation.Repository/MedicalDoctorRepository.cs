@@ -4,7 +4,6 @@ using Microsoft.EntityFrameworkCore;
 
 namespace MedicalConsultation.Repository
 {
-    //public class MedicalDoctorRepository : EFRepository<MedicalDoctorEntity>, IMedicalDoctorRepository
     public class MedicalDoctorRepository : IMedicalDoctorRepository
     {
         protected ApplicationDbContext _context;

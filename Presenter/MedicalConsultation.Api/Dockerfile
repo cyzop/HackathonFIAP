@@ -14,7 +14,7 @@ ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["Presenter/MedicalConsultation.Api/MedicalConsultation.Api.csproj", "Presenter/MedicalConsultation.Api/"]
 COPY ["Application/MedicalConsultation.Controller/MedicalConsultation.Controller.csproj", "Application/MedicalConsultation.Controller/"]
-COPY ["Usecase/MedicalConsultation.UseCases/MedicalConsultation.UseCases.csproj", "Usecase/MedicalConsultation.UseCases/"]
+COPY ["Application/MedicalConsultation.UseCases/MedicalConsultation.UseCases.csproj", "Application/MedicalConsultation.UseCases/"]
 COPY ["Application/MedicalConsultation.Messages/MedicalConsultation.Messages.csproj", "Application/MedicalConsultation.Messages/"]
 COPY ["Application/MedicalConsultation.Validations/MedicalConsultation.Validations.csproj", "Application/MedicalConsultation.Validations/"]
 COPY ["Domain/MedicalConsultation.Entity/MedicalConsultation.Entity.csproj", "Domain/MedicalConsultation.Entity/"]

@@ -1,5 +1,4 @@
 ﻿using MedicalConsultation.Entity;
-using MedicalConsultation.Entity.Patient;
 using MedicalConsultation.Interfaces.Repository;
 
 namespace MedicalConsultation.Repository

@@ -1,13 +1,9 @@
-﻿using MedicalConsultation.Entity;
-using MedicalConsultation.Entity.Patient;
+﻿using MedicalConsultation.Entity.Patient;
 using MedicalConsultation.Interfaces.Repository;
-using Microsoft.EntityFrameworkCore;
 
 namespace MedicalConsultation.Repository
 {
     public class PatientRepository : EFRepository<PatientEntity>, IPatientRepository
-    //public class PatientRepository : PersonRepository<UserEntity>, IPatientRepository
-   
     {
         public PatientRepository(ApplicationDbContext context) : base(context)
         {
