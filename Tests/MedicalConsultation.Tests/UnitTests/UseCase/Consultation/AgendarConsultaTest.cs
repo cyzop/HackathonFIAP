@@ -19,13 +19,14 @@ namespace MedicalConsultation.Tests.UnitTests.UseCase.Consulta
         }
 
         [Fact(DisplayName = "Teste de validacao da regra para Agendar uma Consulta")]
-        [Trait("UseCase.Consultation.Incluir", "Teste de validação de agendamento de Consulta")]
+        [Trait("UseCase.Consultation.Include", "Teste de validação de agendamento de Consulta")]
         public void ValidateUseCase_Should_NotException_VerifyMethod()
         {
             //Arrange
             var medico = _medicalFixture.GenerateEntity();
             var paciente = _patientFixture.GenerateEntity();
             var consulta = _fixture.GenerateEntity(paciente, medico);
+            consulta.SetStatus(ConsultationStatus.Agendada);
 
             var usuario = (UserEntity)paciente;
 
@@ -42,7 +43,7 @@ namespace MedicalConsultation.Tests.UnitTests.UseCase.Consulta
         }
 
         [Fact(DisplayName = "Teste de validacao da regra para Agendar uma Consulta sem informação do Medico")]
-        [Trait("UseCase.Consultation.Incluir", "Teste de validação de agendamento de Consulta sem informação do Medico")]
+        [Trait("UseCase.Consultation.Include", "Teste de validação de agendamento de Consulta sem informação do Medico")]
         public void ValidateUseCase_Should_AssertException_When_MedicalDoctorIsNull()
         {
             //Arrange
@@ -58,7 +59,7 @@ namespace MedicalConsultation.Tests.UnitTests.UseCase.Consulta
         }
 
         [Fact(DisplayName = "Teste de validacao da regra para Agendar uma Consulta sem informação de Paciente")]
-        [Trait("UseCase.Consultation.Incluir", "Teste de validação de agendamento de Consulta sem informação de Paciente")]
+        [Trait("UseCase.Consultation.Include", "Teste de validação de agendamento de Consulta sem informação de Paciente")]
         public void ValidateUseCase_Should_AssertException_When_PatientDoctorIsNull()
         {
             //Arrange
@@ -75,7 +76,7 @@ namespace MedicalConsultation.Tests.UnitTests.UseCase.Consulta
         }
 
         [Fact(DisplayName = "Teste de validacao da regra para Agendar uma Consulta em horário já ocupado")]
-        [Trait("UseCase.Consultation.Incluir", "Teste de validação de agendamento de Consulta em horário já ocupado")]
+        [Trait("UseCase.Consultation.Include", "Teste de validação de agendamento de Consulta em horário já ocupado")]
         public void ValidateUseCase_Should_AssertException_When_MedicalHasAnotherAppointmentAtTheSameTime()
         {
             //Arrange
@@ -93,7 +94,7 @@ namespace MedicalConsultation.Tests.UnitTests.UseCase.Consulta
         }
 
         [Fact(DisplayName = "Teste de validacao da regra para Agendar uma Consulta em horário que Paciente já tem consulta agendada")]
-        [Trait("UseCase.Consultation.Incluir", "Teste de validação de agendamento de Consulta em horário que Paciente já tem consulta agendada")]
+        [Trait("UseCase.Consultation.Include", "Teste de validação de agendamento de Consulta em horário que Paciente já tem consulta agendada")]
         public void ValidateUseCase_Should_AssertException_When_PatientHasAnotherAppointmentAtTheSameTime()
         {
             //Arrange

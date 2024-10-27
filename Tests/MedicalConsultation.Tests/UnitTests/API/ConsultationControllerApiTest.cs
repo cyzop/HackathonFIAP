@@ -1,31 +1,17 @@
-﻿using Castle.Core.Logging;
-using FluentAssertions;
+﻿using FluentAssertions;
 using MedicalConsultation.Api.Converter;
 using MedicalConsultation.Entity.Consultation;
-using MedicalConsultation.Entity.MedicalDoctor;
 using MedicalConsultation.Interfaces.Controller;
 using MedicalConsultation.Shared;
 using MedicalConsultation.Tests.Fixture;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
-using System.Runtime.CompilerServices;
 
 namespace MedicalConsultation.Tests.UnitTests.API
 {
     public class ConsultationControllerApiTest
     {
-
-        /*
-         *  private readonly Mock<ILogger<MedicalConsultation.Api.Controllers.MedicalDoctorController>> _loggerMock;
-        private readonly Mock<IMedicalDoctorController> _medicalController;
-        private readonly MedicalDoctorTestFixture _fixture;
-        private readonly MedicalConsultation.Api.Controllers.MedicalDoctorController _controllerApi;
-        private readonly IDaoConverter<MedicalDoctorDao, MedicalDoctorEntity> _daoConverter;
-        private readonly IEntityConverter<MedicalDoctorEntity, MedicalDoctorDao> _entityConverter;
-
-         */
-
         private readonly Mock<ILogger<MedicalConsultation.Api.Controllers.ConsultationController>> _loggerMock;
         private readonly MedicalConsultation.Api.Controllers.ConsultationController _controllerApi;
         private readonly Mock<IConsultationController> _consultationController;
@@ -109,8 +95,6 @@ namespace MedicalConsultation.Tests.UnitTests.API
             _consultationController.Setup(ctx => ctx.ListarPorPacienteAPartirDe(paciente.Email, data)).Returns(consultas);
 
             var consultasDao = consultas.Select(e => _entityConverter.Convert(e)).ToList();
-
-            //ActListarPorPacienteAPartirDe
             var result = _controllerApi.GetConsultasPacienteAPartir(paciente.Email, data);
 
             //Assert
