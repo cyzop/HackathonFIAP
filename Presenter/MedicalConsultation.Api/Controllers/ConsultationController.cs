@@ -29,9 +29,15 @@ namespace MedicalConsultation.Api.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetConsultasMedico(string email)
         {
+            return await GetConsultasMedicoApartir(email, DateTime.Now);
+        }
+        
+        [NonAction]
+        public async Task<IActionResult> GetConsultasMedicoApartir(string email, DateTime data)
+        {
             try
             {
-                var ativos = _consultationController.ListarPorMedicoAPartirDe(email, DateTime.Now);
+                var ativos = _consultationController.ListarPorMedicoAPartirDe(email, data);
                 var quantidade = ativos?.Count() ?? 0;
 
                 _logger.LogInformation("Get Consultas p/ Medico length {quantidade}", quantidade);
@@ -56,9 +62,14 @@ namespace MedicalConsultation.Api.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetConsultasPaciente(string email)
         {
+            return await GetConsultasPacienteAPartir(email, DateTime.Now);
+        }
+        [NonAction]
+        public async Task<IActionResult> GetConsultasPacienteAPartir(string email, DateTime data)
+        {
             try
             {
-                var ativos = _consultationController.ListarPorPacienteAPartirDe(email, DateTime.Now);
+                var ativos = _consultationController.ListarPorPacienteAPartirDe(email, data);
                 var quantidade = ativos?.Count() ?? 0;
 
                 _logger.LogInformation("Get Consultas p/ Paciente length {quantidade}", quantidade);

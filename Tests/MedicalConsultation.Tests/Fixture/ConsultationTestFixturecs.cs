@@ -54,6 +54,13 @@ namespace MedicalConsultation.Tests.Fixture
             return new ConsultationEntity(id, paciente, medico, data, enumStatus, dataStatus);
         }
 
+        public ConsultationEntity GenerateEntity(PatientEntity paciente = null, MedicalDoctorEntity medico = null)
+        {
+            return GenerateEntity(
+                paciente?? _patientTestFixture.GenerateEntity(),
+                medico?? _medicalDoctorTestFixture.GenerateEntity(),
+                _faker.Date.Future(1, DateTime.Now));
+        }
         public ConsultationEntity GenerateEntity()
         {
             return GenerateEntity(

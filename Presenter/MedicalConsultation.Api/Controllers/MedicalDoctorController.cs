@@ -35,15 +35,19 @@ namespace MedicalConsultation.Api.Controllers
         {
             try
             {
-                var ativos = _controller.ListarAtivos();
-                var quantidade = ativos?.Count() ?? 0;
+                var medicos = _controller.ListarAtivos();
+                var quantidade = medicos?.Count() ?? 0;
 
                 _logger.LogInformation("Get Medicos Ativos length {quantidade}", quantidade);
 
-                if (ativos?.Count() > 0)
-                    return Ok(ativos
+                if (medicos?.Count() > 0)
+                {
+                    var retorno = medicos
                             .Select(p => _entityConverter.Convert(p))?
-                            .ToList());
+                            .ToList();
+
+                    return Ok(retorno);
+                }
                 else
                     return StatusCode(StatusCodes.Status204NoContent);//NoContent
             }
