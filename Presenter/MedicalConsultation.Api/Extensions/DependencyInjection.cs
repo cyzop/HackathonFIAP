@@ -1,4 +1,5 @@
-﻿using MedicalConsultation.Api.Converter;
+﻿using MassTransit;
+using MedicalConsultation.Api.Converter;
 using MedicalConsultation.Controller;
 using MedicalConsultation.Entity;
 using MedicalConsultation.Entity.Consultation;
@@ -7,7 +8,9 @@ using MedicalConsultation.Entity.Patient;
 using MedicalConsultation.Gateways;
 using MedicalConsultation.Interfaces.Controller;
 using MedicalConsultation.Interfaces.Gateway;
+using MedicalConsultation.Interfaces.Messagins;
 using MedicalConsultation.Interfaces.Repository;
+using MedicalConsultation.MassTransit;
 using MedicalConsultation.Repository;
 using MedicalConsultation.Shared;
 
@@ -18,7 +21,8 @@ namespace MedicalConsultation.Api.Extensions
     {
         public static IServiceCollection AddDependencies(this IServiceCollection services, IConfiguration configuration)
         {
-        
+            services.AddMessaging(configuration);
+            services.AddScoped<INotificationProducer, NotificationProducer>();
 
             services.AddConverters();
             services.AddRepositories();
@@ -65,7 +69,22 @@ namespace MedicalConsultation.Api.Extensions
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IMedicalDoctorRepository, MedicalDoctorRepository>();
             services.AddScoped<IConsultationRepository, ConsultationRepository>();
+            services.AddScoped<INotificationRepository, NotificationRepository>();
             
+            return services;
+        }
+
+        public static IServiceCollection AddMessaging(this IServiceCollection services, IConfiguration configuration)
+        {
+            var conexao = configuration["masstransit:azurebus"] ?? string.Empty;
+
+            services.AddMassTransit((x => {
+                x.UsingAzureServiceBus((context, cfg) =>
+                {
+                    cfg.Host(conexao);
+                });
+            }));
+
             return services;
         }
 

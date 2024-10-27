@@ -8,11 +8,11 @@ namespace MedicalConsultation.Entity
             private set; }
 
         public string Name { get; 
-            private set; }
+            set; }
         
         [EmailAddress]
         public string Email { get; 
-            private set; }
+            set; }
 
         public void SetName(string name) 
             => Name = name;    

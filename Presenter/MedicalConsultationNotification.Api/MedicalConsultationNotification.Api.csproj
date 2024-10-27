@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.10" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.10" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.2" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.2" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Application\MedicalConsultation.Controller\MedicalConsultation.Controller.csproj" />
+    <ProjectReference Include="..\..\Application\MedicalConsultation.Interfaces\MedicalConsultation.Interfaces.csproj" />
+    <ProjectReference Include="..\..\Gateway\MedicalConsultation.Gateways\MedicalConsultation.Gateways.csproj" />
+    <ProjectReference Include="..\..\Infrastructure\MedicalConsultation.MassTransit\MedicalConsultation.MassTransit.csproj" />
+    <ProjectReference Include="..\..\Infrastructure\MedicalConsultation.Repository\MedicalConsultation.Repository.csproj" />
+  </ItemGroup>
+
+</Project>

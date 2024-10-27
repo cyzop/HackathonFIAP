@@ -1,5 +1,4 @@
 ﻿using MedicalConsultation.Entity.MedicalDoctor;
-using MedicalConsultation.Entity.Patient;
 using MedicalConsultation.Messages.EntityValidationMessages;
 using MedicalConsultation.Validations;
 
@@ -7,19 +6,18 @@ namespace MedicalConsultation.Entity.Consultation
 {
     public class ConsultationEntity : BasicEntity
     {
-        //public int Id { get; set; }
         public int PacienteId { get; set; }
         public int MedicoId { get; set; }
         public DateTime Date { get; set; }
         public ConsultationStatus Status
         {
             get;
-            private set;
+            set;
         }
         public DateTime? DataStatus
         {
             get;
-            private set;
+            set;
         }
         public virtual UserEntity Paciente { get; set; }
         public virtual MedicalDoctorEntity Medico { get; set; }
@@ -28,6 +26,10 @@ namespace MedicalConsultation.Entity.Consultation
         {
             Status = status;
             DataStatus = DateTime.Now;
+        }
+
+        public ConsultationEntity():base()
+        {
         }
 
         public ConsultationEntity(int id, int pacienteId, int medicoId, DateTime date, ConsultationStatus status, DateTime? dataStatus):base(id)
@@ -51,11 +53,13 @@ namespace MedicalConsultation.Entity.Consultation
             Validate();
         }
 
-        public ConsultationEntity(int id, UserEntity paciente, MedicalDoctorEntity medico, DateTime date, ConsultationStatus status, DateTime? dataStatus) 
-            : this(id, paciente.Id, medico.Id, date, status, dataStatus)
+        public ConsultationEntity(int id, UserEntity paciente, MedicalDoctorEntity medico, DateTime date, ConsultationStatus status, DateTime? dataStatus) : base(id)
         {
             Paciente = paciente;
             Medico = medico;
+            Date = date;
+            Status = status;
+            DataStatus = dataStatus;
 
             Validate();
         }
@@ -72,9 +76,9 @@ namespace MedicalConsultation.Entity.Consultation
         {
             var idpaciente = PacienteId>0 ? PacienteId : Paciente?.Id;
             var idmedico = MedicoId > 0 ? MedicoId : Medico?.Id;
-            Assertion.AssertMinValue(idpaciente, 1, ConsultationValidationMessages.PatientCannotBeIsNullOrEmpty);
-            Assertion.AssertMinValue(idpaciente, 1, ConsultationValidationMessages.MedicalDoctorCannotBeIsNullOrEmpty);
-            Assertion.AssertDataIsNullOrInvalid(Date, ConsultationValidationMessages.DateCannotBeIsNullOrEmpty);
+            Assertion.AssertGreatThanValuee(idpaciente, 0, ConsultationValidationMessages.PatientCannotBeNullOrEmpty);
+            Assertion.AssertGreatThanValuee(idmedico, 0, ConsultationValidationMessages.MedicalDoctorCannotBeNullOrEmpty);
+            Assertion.AssertDateIsNullOrInvalid(Date, ConsultationValidationMessages.DateCannotBeNullOrEmpty);
         }
     }
 }

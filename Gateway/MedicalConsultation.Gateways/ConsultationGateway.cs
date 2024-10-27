@@ -68,5 +68,10 @@ namespace MedicalConsultation.Gateways
         {
             return _consultationRepository.ConsultarPorId(idConsulta);
         }
+
+        public IEnumerable<ConsultationEntity> ObterConsultasPorData(DateTime data)
+        {
+            return _consultationRepository.ConsultarPorData(data);
+        }
     }
 }

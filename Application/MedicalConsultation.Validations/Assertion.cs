@@ -60,6 +60,11 @@ namespace MedicalConsultation.Validations
                 value < minValue)
                 throw new ArgumentException(message);
         }
+        public static void AssertGreatThanValuee(int? value, int minValue, string message)
+        {
+            if (value == null || value <= minValue)
+                throw new ArgumentException(message);
+        }
         public static void AssertMaxValue(int? value, int maxValue, string message)
         {
             if (value != null &&
@@ -73,12 +78,12 @@ namespace MedicalConsultation.Validations
                 throw new ArgumentException(message);
         }
 
-        public static void AssertDataIsNullOrInvalid(DateTime date, string message)
+        public static void AssertDateIsNullOrInvalid(DateTime date, string message)
         {
             if(date == DateTime.MinValue)
                 throw new ArgumentException(message);
         }
-        public static void AssertIfDataIsGreaterThanOrEquals(DateTime date, DateTime minValue, string message)
+        public static void AssertIfDateIsGreaterThanOrEquals(DateTime date, DateTime minValue, string message)
         {
             if (date < minValue)
                 throw new ArgumentException(message);

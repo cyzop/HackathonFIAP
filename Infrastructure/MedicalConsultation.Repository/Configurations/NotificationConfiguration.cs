@@ -12,8 +12,9 @@ namespace MedicalConsultation.Repository.Configurations
             builder.HasKey(p => p.Id);
             builder.Property(p => p.Id).HasColumnType("INT");
             builder.Property(p => p.Data).HasColumnType("DATETIME").IsRequired();
-            builder.Property(p => p.Message).HasColumnType("VARCHAR(250)").IsRequired();
-            builder.Property(p => p.ConsultaId).HasColumnType("INT").IsRequired();
+            builder.Property(p => p.Message).HasColumnType("VARCHAR(500)").IsRequired();
+            builder.Property(p=> p.StatusConsulta).HasConversion<string>().IsRequired();
+            builder.Property(p => p.ConsultaId).HasColumnType("INT");
             builder.HasOne(p => p.Consulta).WithMany().HasPrincipalKey(q => q.Id);
         }
     }

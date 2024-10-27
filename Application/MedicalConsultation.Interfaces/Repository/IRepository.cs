@@ -5,7 +5,7 @@
         abstract void Alterar(T entity);
         void Incluir (T entity);
         T ConsultarPorId(int id);
-        ICollection<T> ConsultarAtivos();
+        IEnumerable<T> ConsultarAtivos();
 
     }
 }

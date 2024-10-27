@@ -118,5 +118,15 @@ namespace MedicalConsultation.Repository
 
             return consultas?.ToList();
         }
+
+        public IEnumerable<ConsultationEntity> ConsultarPorData(DateTime diaConsulta)
+        {
+            return _context.Consultas
+                           .Where(c => c.Date.Date == diaConsulta.Date)
+                           .Include(c => c.Medico)
+                           .Include(c => c.Medico.Usuario)
+                           .Include(c => c.Paciente)
+                           .ToList();
+        }
     }
 }

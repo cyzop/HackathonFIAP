@@ -3,7 +3,8 @@ using MedicalConsultation.Entity.Notify;
 
 namespace MedicalConsultation.Interfaces.Messagins
 {
-    public interface INotificationConsumer : IConsumer<ConsultationNotificationEntity>
+    public interface INotificationConsumer// : IConsumer<ConsultationNotificationEntity>
     {
+        void ProcessMessage(ConsultationNotificationEntity message);
     }
 }

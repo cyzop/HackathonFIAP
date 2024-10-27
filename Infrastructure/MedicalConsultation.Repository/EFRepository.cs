@@ -21,7 +21,7 @@ namespace MedicalConsultation.Repository
             _context.SaveChanges();
         }
 
-        public virtual ICollection<T> ConsultarAtivos() 
+        public virtual IEnumerable<T> ConsultarAtivos() 
             => _dbSet.Where(e => e.Ativo).ToList();
 
         public virtual T ConsultarPorId(int id)

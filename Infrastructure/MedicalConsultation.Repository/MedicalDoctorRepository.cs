@@ -21,7 +21,7 @@ namespace MedicalConsultation.Repository
             _context.SaveChanges();
         }
 
-        public ICollection<MedicalDoctorEntity> ConsultarAtivos()
+        public IEnumerable<MedicalDoctorEntity> ConsultarAtivos()
         {
             var retorno = _dbSet.Where(e => e.Usuario.Ativo)
                     .Include(e => e.Usuario)
@@ -48,12 +48,5 @@ namespace MedicalConsultation.Repository
             _dbSet.Add(entity);
             _context.SaveChanges();
         }
-
-        //public MedicalDoctorEntity ConsultarPorEmail(string email)
-        //{
-        //    return _dbSet
-        //        .Where(p => p .Email.ToLower() == email.ToLower())
-        //        .FirstOrDefault();
-        //}
     }
 }

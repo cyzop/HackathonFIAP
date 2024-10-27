@@ -3,6 +3,7 @@ namespace MedicalConsultation.Consumer
     public class Worker : BackgroundService
     {
         private readonly ILogger<Worker> _logger;
+        private DateTime lastCycle = DateTime.MinValue;
 
         public Worker(ILogger<Worker> logger)
         {
@@ -15,9 +16,9 @@ namespace MedicalConsultation.Consumer
             {
                 if (_logger.IsEnabled(LogLevel.Information))
                 {
-                    _logger.LogInformation("Worker running at: {time}", DateTimeOffset.Now);
+                    //_logger.LogInformation("Monitoring Worker running at: {time}", DateTimeOffset.Now);
                 }
-                await Task.Delay(1000, stoppingToken);
+                await Task.Delay(2000, stoppingToken);
             }
         }
     }

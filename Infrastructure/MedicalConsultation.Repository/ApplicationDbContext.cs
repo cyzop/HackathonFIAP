@@ -1,7 +1,6 @@
 ﻿using MedicalConsultation.Entity;
 using MedicalConsultation.Entity.Consultation;
 using MedicalConsultation.Entity.Notify;
-using MedicalConsultation.Entity.Schedule;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
@@ -20,23 +19,17 @@ namespace MedicalConsultation.Repository
         {
         }
 
-        //public DbSet<PatientEntity> Pacientes { get;set; }
-        //public DbSet<MedicalDoctorEntity> Medicos { get; set; }
         public DbSet<UserEntity> Usuarios { get; set; }
         public DbSet<ConsultationEntity> Consultas { get; set; }
-        //public DbSet<DailySchedulesEntity> HorariosDia { get; set; }
-        //public DbSet<MedicalDoctorSchedulesEntity> AgendaMedica { get; set; }
-        //public DbSet<TimeEntity> Horarios { get; set; }
         public DbSet<ConsultationNotificationEntity> Notificacoes { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
             {
-                //string str = _configuration?.GetSection("ConnectionStrings:ConnectionString")?.Value;
-                string str = "Server=localhost\\SQLEXPRESS;Database=HackathonDB;Trusted_Connection=True;MultipleActiveResultSets=true;TrustServerCertificate=True;";
+                string str = _configuration["ConnectionStrings:ConnectionString"]??
+                            "Server=localhost\\SQLEXPRESS;Database=HackathonDB;Trusted_Connection=True;MultipleActiveResultSets=true;TrustServerCertificate=True;";
                 optionsBuilder.UseSqlServer(str);
-                //optionsBuilder.UseLazyLoadingProxies();
             }
         }
 

@@ -40,3 +40,7 @@
 /Presenter/MedicalConsultation.Shared/bin/Debug/net7.0/MedicalConsultation.Shared.dll
 /Tests/MedicalConsultation.Tests/bin/Debug/net8.0
 /Tests/MedicalConsultation.Tests/obj
+/MedicalConsultation.Consumer - Copia/bin/Debug/net8.0
+/MedicalConsultation.Consumer - Copia/obj
+/Presenter/MedicalConsultationNotification.Api/bin/Debug/net8.0
+/Presenter/MedicalConsultationNotification.Api/obj

@@ -2,11 +2,11 @@
 {
     public static class ConsultationValidationMessages
     {
-        public static string PatientCannotBeIsNullOrEmpty 
+        public static string PatientCannotBeNullOrEmpty 
             => "O paciente é obrigatório.";
-        public static string MedicalDoctorCannotBeIsNullOrEmpty 
+        public static string MedicalDoctorCannotBeNullOrEmpty 
             => "O médico é obrigatório.";
-        public static string DateCannotBeIsNullOrEmpty 
+        public static string DateCannotBeNullOrEmpty 
             => "A dada da consulta é obrigatória.";
     }
 }

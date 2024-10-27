@@ -83,7 +83,7 @@ namespace MedicalConsultation.Controller
                     c.SetStatus(Entity.ConsultationStatus.Cancelada);
                     _consultationGateway.AtualizarConsulta(c);
                     //enviar notificação
-                    _notificationsGateway.SendNotification(
+                    _notificationsGateway.EnviarNotificacao(
                         new Entity.Notify.ConsultationNotificationEntity(c, DateTime.Now));
                 }
             });

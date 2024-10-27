@@ -9,13 +9,17 @@
 
   <ItemGroup>
     <PackageReference Include="MassTransit.Azure.ServiceBus.Core" Version="8.3.0" />
+    <PackageReference Include="Microsoft.Azure.ServiceBus" Version="5.2.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.2" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.1" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.2" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Application\MedicalConsultation.Controller\MedicalConsultation.Controller.csproj" />
     <ProjectReference Include="..\Application\MedicalConsultation.Interfaces\MedicalConsultation.Interfaces.csproj" />
+    <ProjectReference Include="..\Infrastructure\MedicalConsultation.MassTransit\MedicalConsultation.MassTransit.csproj" />
+    <ProjectReference Include="..\Infrastructure\MedicalConsultation.Repository\MedicalConsultation.Repository.csproj" />
     <ProjectReference Include="..\MedicalConsultation.Mail\MedicalConsultation.Mail.csproj" />
   </ItemGroup>
 </Project>

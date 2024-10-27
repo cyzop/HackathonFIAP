@@ -20,7 +20,18 @@ namespace MedicalConsultation.Controller
 
         public ConsultationEntity Alterar(ConsultationEntity entity)
         {
-            return _consultationGateway.AtualizarConsulta(entity);
+            var consulta = _consultationGateway.ObterPorId(entity.Id);
+            if(consulta != null)
+            {
+                var useCase = new UpdateConsultationUseCase(consulta, entity);
+                var alterar = useCase.VerificarAlteracao();
+                if (alterar != null)
+                {
+                    _consultationGateway.AtualizarConsulta(alterar);
+                    return alterar;
+                }
+            }
+            return entity;
         }
 
         public bool Cancelar(int idConsulta)

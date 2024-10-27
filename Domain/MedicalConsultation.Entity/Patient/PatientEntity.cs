@@ -10,11 +10,16 @@ namespace MedicalConsultation.Entity.Patient
             Validate();
         }
 
+        public PatientEntity(int id, string name, string CPF, string email, bool ativo) : base(id, name, CPF, email, ativo)
+        {
+            Validate();
+        }
+
         public override void Validate()
         {
-            Assertion.AssertStringIsNotNullOrEmpty(base.Name, PatientValidationMessages.NameCannotBeIsNullOrEmpty);
-            Assertion.AssertStringIsNotNullOrEmpty(base.Email, PatientValidationMessages.EmailCannotBeIsNullOrEmpty);
-            Assertion.AssertStringIsNotNullOrEmpty(base.CPF.ToString(), PatientValidationMessages.CPFCannotBeIsNullOrEmpty);
+            Assertion.AssertStringIsNotNullOrEmpty(base.Name, PatientValidationMessages.NameCannotBeNullOrEmpty);
+            Assertion.AssertStringIsNotNullOrEmpty(base.Email, PatientValidationMessages.EmailCannotBeNullOrEmpty);
+            Assertion.AssertStringIsNotNullOrEmpty(base.CPF.ToString(), PatientValidationMessages.CPFCannotBeNullOrEmpty);
 
             //Max lenght 150
             Assertion.AssertMaxValue(base.Name.Length, 150, PatientValidationMessages.NameGreaterThanLimit(150));

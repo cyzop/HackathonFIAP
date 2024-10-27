@@ -25,7 +25,7 @@ namespace MedicalConsultation.Entity.MedicalDoctor
         {
         }
 
-        public MedicalDoctorEntity(int id, string name, string cpf, string email, string cRM, string especialidade, bool ativo) 
+        public MedicalDoctorEntity(int id, string name, string cpf, string email, string cRM, string especialidade, bool ativo) :base()
         {
             Id = id;
             CRM = cRM;
@@ -46,9 +46,9 @@ namespace MedicalConsultation.Entity.MedicalDoctor
 
         public void Validate()
         {
-            Assertion.AssertStringIsNotNullOrEmpty(this.Usuario?.Name, MedicalDoctorValidationMessages.NameCannotBeIsNullOrEmpty);
-            Assertion.AssertStringIsNotNullOrEmpty(this.Usuario?.Email, MedicalDoctorValidationMessages.EmailCannotBeIsNullOrEmpty);
-            Assertion.AssertStringIsNotNullOrEmpty(this.CRM, MedicalDoctorValidationMessages.CRMCannotBeIsNullOrEmpty);
+            Assertion.AssertStringIsNotNullOrEmpty(this.Usuario?.Name, MedicalDoctorValidationMessages.NameCannotBeNullOrEmpty);
+            Assertion.AssertStringIsNotNullOrEmpty(this.Usuario?.Email, MedicalDoctorValidationMessages.EmailCannotBeNullOrEmpty);
+            Assertion.AssertStringIsNotNullOrEmpty(this.CRM, MedicalDoctorValidationMessages.CRMCannotBeNullOrEmpty);
         }
 
         public void SetAtivo(bool ativo)

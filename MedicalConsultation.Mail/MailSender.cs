@@ -10,21 +10,31 @@ namespace MedicalConsultation.Mail
         private readonly ILogger<MailSender> _logger;
         private readonly string connectionString;
         private readonly string defaultSenderAddress;
+        private readonly string defaultsubject;
 
         public MailSender(ILogger<MailSender> logger, IConfiguration config)
         {
             _logger = logger;
-            connectionString = config.GetSection("mail:azurecs").Value ?? string.Empty;
-            defaultSenderAddress = config.GetSection("mail:senderAddress").Value ?? string.Empty;
+            connectionString = config["mail:azurecs"]?? string.Empty;
+            defaultSenderAddress = config["mail:senderAddress"] ?? string.Empty;
+            defaultsubject = config["mail:subject"] ?? string.Empty;
         }
 
         public void SendHtml(string senderAddress, string recipientAddress, string subject, string html)
         {
-            Send(senderAddress, recipientAddress, subject, html, null);
+            Send(senderAddress?? defaultSenderAddress, 
+                recipientAddress, 
+                subject?? defaultsubject, 
+                html, 
+                null);
         }
         public void SendText(string senderAddress, string recipientAddress, string subject, string text)
         {
-            Send(senderAddress, recipientAddress, subject, null, text);
+            Send(senderAddress ?? defaultSenderAddress,
+               recipientAddress,
+               subject ?? defaultsubject,
+               null,
+               text);
         }
         private void Send(string senderAddress, string recipientAddress, string subject, string hmlContent = null, string plainText = null)
         {

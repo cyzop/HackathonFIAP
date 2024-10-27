@@ -4,6 +4,6 @@ namespace MedicalConsultation.Interfaces.Messagins
 {
     public interface INotificationProducer
     {
-        void SendNotification(ConsultationNotificationEntity notification);
+        Task SendNotification(ConsultationNotificationEntity notification);
     }
 }

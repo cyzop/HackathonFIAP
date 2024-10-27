@@ -15,5 +15,6 @@ namespace MedicalConsultation.Interfaces.Repository
         IEnumerable<ConsultationEntity> ConsultarPorPacienteAPartirDe(int pacienteId, DateTime dataInicio);
         IEnumerable<ConsultationEntity> ConsultarPorMedicoNoPeriodo(int medicoId, DateTime? horarioInicio, DateTime? horarioFim);
         IEnumerable<ConsultationEntity> ConsultarPorPacienteNoPeriodo(int pacienteId, DateTime? horarioInicio, DateTime? horarioFim);
+        IEnumerable<ConsultationEntity> ConsultarPorData(DateTime diaConsulta);
     }
 }

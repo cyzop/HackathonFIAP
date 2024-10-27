@@ -2,9 +2,9 @@
 {
     public static class NotificationValidationMessages
     {
-        public static string ConsultationCannotBeIsNullOrEmpty 
+        public static string ConsultationCannotBeNullOrEmpty 
             => "A consulta não pode estar vazia.";
-        public static string PatientCannotBeIsNullOrEmpty 
+        public static string PatientCannotBeNullOrEmpty 
             => "O paciente da consulta é obrigatório.";
     }
 }

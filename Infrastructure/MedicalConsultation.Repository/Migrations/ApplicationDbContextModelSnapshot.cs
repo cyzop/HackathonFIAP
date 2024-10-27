@@ -104,7 +104,11 @@ namespace MedicalConsultation.Repository.Migrations
 
                     b.Property<string>("Message")
                         .IsRequired()
-                        .HasColumnType("VARCHAR(250)");
+                        .HasColumnType("VARCHAR(500)");
+
+                    b.Property<string>("StatusConsulta")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -128,11 +132,6 @@ namespace MedicalConsultation.Repository.Migrations
                         .IsRequired()
                         .HasColumnType("VARCHAR(14)");
 
-                    b.Property<string>("Discriminator")
-                        .IsRequired()
-                        .HasMaxLength(13)
-                        .HasColumnType("nvarchar(13)");
-
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("VARCHAR(150)");
@@ -144,17 +143,6 @@ namespace MedicalConsultation.Repository.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Usuario", (string)null);
-
-                    b.HasDiscriminator().HasValue("UserEntity");
-
-                    b.UseTphMappingStrategy();
-                });
-
-            modelBuilder.Entity("MedicalConsultation.Entity.Patient.PatientEntity", b =>
-                {
-                    b.HasBaseType("MedicalConsultation.Entity.UserEntity");
-
-                    b.HasDiscriminator().HasValue("PatientEntity");
                 });
 
             modelBuilder.Entity("MedicalConsultation.Entity.Consultation.ConsultationEntity", b =>
@@ -165,7 +153,7 @@ namespace MedicalConsultation.Repository.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("MedicalConsultation.Entity.Patient.PatientEntity", "Paciente")
+                    b.HasOne("MedicalConsultation.Entity.UserEntity", "Paciente")
                         .WithMany()
                         .HasForeignKey("PacienteId")
                         .OnDelete(DeleteBehavior.Cascade)

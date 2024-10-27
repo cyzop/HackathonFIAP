@@ -21,7 +21,7 @@ namespace MedicalConsultation.Repository
             _context.SaveChanges();
         }
 
-        public ICollection<ConsultationNotificationEntity> ConsultarPorIdConsulta(int idConsulta)
+        public IEnumerable<ConsultationNotificationEntity> ConsultarPorIdConsulta(int idConsulta)
         {
             return _context.Notificacoes
                          .Where(e => e.ConsultaId == idConsulta)
@@ -49,7 +49,7 @@ namespace MedicalConsultation.Repository
                         .FirstOrDefault();
         }
 
-        public ICollection<ConsultationNotificationEntity> ConsultarAtivos()
+        public IEnumerable<ConsultationNotificationEntity> ConsultarAtivos()
         {
             return _context.Notificacoes.
                 Where(n=>n.Ativo)
@@ -60,7 +60,7 @@ namespace MedicalConsultation.Repository
                 .ToList();
         }
 
-        public ICollection<ConsultationNotificationEntity> ConsultarPorIdConsultaNaData(int idConsulta, DateTime? data)
+        public IEnumerable<ConsultationNotificationEntity> ConsultarPorIdConsultaNaData(int idConsulta, DateTime? data)
         {
             var registros = from c in _context.Notificacoes
                             where c.ConsultaId == idConsulta
@@ -77,5 +77,10 @@ namespace MedicalConsultation.Repository
                     .ToList();
         }
 
+        public IEnumerable<ConsultationNotificationEntity> ConsultarPorDataNotificacao(DateTime data)
+        {
+            return _context.Notificacoes
+                .Where(c => c.Data.Date == data.Date);
+        }
     }
 }

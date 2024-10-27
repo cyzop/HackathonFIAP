@@ -4,8 +4,9 @@ namespace MedicalConsultation.Interfaces.Repository
 {
     public interface INotificationRepository : IRepository<ConsultationNotificationEntity>
     {
-        public ICollection<ConsultationNotificationEntity> ConsultarPorIdConsulta(int idConsulta);
-        public ICollection<ConsultationNotificationEntity> ConsultarPorIdConsultaNaData(int idConsulta, DateTime? data);
+        IEnumerable<ConsultationNotificationEntity> ConsultarPorDataNotificacao(DateTime data);
+        IEnumerable<ConsultationNotificationEntity> ConsultarPorIdConsulta(int idConsulta);
+        IEnumerable<ConsultationNotificationEntity> ConsultarPorIdConsultaNaData(int idConsulta, DateTime? data);
         public void Incluir(ConsultationNotificationEntity entity);
     }
 }
