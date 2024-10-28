@@ -37,14 +37,14 @@ namespace MedicalConsultation.Api.Controllers
         {
             try
             {
-                var ativos = _consultationController.ListarPorMedicoAPartirDe(email, data);
-                var quantidade = ativos?.Count() ?? 0;
+                var consultas = _consultationController.ListarPorMedicoAPartirDe(email, data);
+                var quantidade = consultas?.Count() ?? 0;
 
                 _logger.LogInformation("Get Consultas p/ Medico length {quantidade}", quantidade);
 
-                if (ativos?.Count() > 0)
+                if (quantidade > 0)
                 {
-                    var result = ativos.Select(e => _entityConverter.Convert(e)).ToList();
+                    var result = consultas.Select(e => _entityConverter.Convert(e)).ToList();
                     return Ok(result);
                 }
                 else
@@ -69,14 +69,14 @@ namespace MedicalConsultation.Api.Controllers
         {
             try
             {
-                var ativos = _consultationController.ListarPorPacienteAPartirDe(email, data);
-                var quantidade = ativos?.Count() ?? 0;
+                var consultas = _consultationController.ListarPorPacienteAPartirDe(email, data);
+                var quantidade = consultas?.Count() ?? 0;
 
                 _logger.LogInformation("Get Consultas p/ Paciente length {quantidade}", quantidade);
 
-                if (ativos?.Count() > 0)
+                if (quantidade > 0)
                 {
-                    var result = ativos.Select(e => _entityConverter.Convert(e)).ToList();  
+                    var result = consultas.Select(e => _entityConverter.Convert(e)).ToList();  
                     return Ok(result);
                 }
                 else

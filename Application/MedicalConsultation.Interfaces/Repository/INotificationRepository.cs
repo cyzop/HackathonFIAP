@@ -7,6 +7,6 @@ namespace MedicalConsultation.Interfaces.Repository
         IEnumerable<ConsultationNotificationEntity> ConsultarPorDataNotificacao(DateTime data);
         IEnumerable<ConsultationNotificationEntity> ConsultarPorIdConsulta(int idConsulta);
         IEnumerable<ConsultationNotificationEntity> ConsultarPorIdConsultaNaData(int idConsulta, DateTime? data);
-        public void Incluir(ConsultationNotificationEntity entity);
+        ConsultationNotificationEntity Incluir(ConsultationNotificationEntity entity);
     }
 }

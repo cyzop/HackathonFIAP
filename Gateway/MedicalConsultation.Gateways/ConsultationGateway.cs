@@ -20,9 +20,9 @@ namespace MedicalConsultation.Gateways
             return consulta;
         }
 
-        public void IncluirConsulta(ConsultationEntity consulta)
+        public ConsultationEntity IncluirConsulta(ConsultationEntity consulta)
         {
-            _consultationRepository.Incluir(consulta);
+            return _consultationRepository.Incluir(consulta);
         }
 
         public IEnumerable<ConsultationEntity> ListarConsultasMedicoAPartirDe(int medicoId, DateTime dataInicio)

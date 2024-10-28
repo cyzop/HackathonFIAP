@@ -15,7 +15,9 @@
       "launchBrowser": true,
       "launchUrl": "swagger",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "CONNECTIONSTRINGS__CONNECTIONSTRING": "Server=localhost\\SQLEXPRESS;Database=HackathonDB;Trusted_Connection=True;MultipleActiveResultSets=true;TrustServerCertificate=True;",
+        "MASSTRANSIT__AZUREBUS": "Endpoint=sb://hackathonrm.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=6nV8JECWq7tpQPD9ub9uj+1WVJ1lexe2p+ASbJRZ8bQ="
       },
       "dotnetRunMessages": true,
       "applicationUrl": "https://localhost:7062;http://localhost:5186"

@@ -20,7 +20,7 @@ namespace MedicalConsultation.Tests.UnitTests.UseCase.Consulta
 
         [Fact(DisplayName = "Teste de validacao da regra para Cancelar uma Consulta sem informação da Consulta")]
         [Trait("UseCase.Consultation.Cancel", "Teste de validação de cancelamento de Consulta sem informar a Consulta")]
-        public void ValidateUseCase_Should_AssertException_When_ConsultationIsNull()
+        public async Task ValidateUseCase_Should_AssertException_When_ConsultationIsNull()
         {
             //Arrange
             ConsultationEntity consulta = null;
@@ -31,6 +31,8 @@ namespace MedicalConsultation.Tests.UnitTests.UseCase.Consulta
 
             //Assert
             Assert.Equal(ConsultationValidationMessages.ConsultationNotFound, result.Message);
+
+            await Task.Delay(1);
         }
     }
 }

@@ -1,0 +1,154 @@
+﻿@page "/teste"
+@using MedicalConsultation.WebApp.Client.Extensions
+@using MedicalConsultation.Shared;
+@using MedicalConsultation.WebApp.Services
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@using System.Globalization
+@using System.ComponentModel.DataAnnotations
+@using Bit.BlazorUI
+@using Microsoft.AspNetCore.Authorization
+@using Newtonsoft.Json
+@using System.Text
+@using static System.Net.WebRequestMethods
+@using BlazorInputMask
+
+@attribute [Authorize]
+
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JSRuntime;
+@inject IHttpClientFactory HttpClientFactory
+@inject UsuarioService UsuarioService 
+
+@rendermode InteractiveAuto
+
+<h3>Minhas Informações</h3>
+
+
+@if (model == null)
+{
+    <p><em>Loading...</em></p>
+    <button class="btn btn-secondary" @onclick="Voltar" type="button">Cancelar</button>
+}
+else
+{
+
+    @if(string.IsNullOrEmpty(model.Name))
+    {
+        <hr>
+        <h5>Complete as informações abaixo antes de utilizar o sistema!</h5>
+
+    }
+
+    <br>
+    <EditForm Model="model" OnValidSubmit="PostEntidade" FormName="testeform">
+
+        <div class="form-group mb-3">
+            <label for="nome">Nome</label>
+            <div class="col-8 text-center">
+            <InputText id="nome" class="form-control bi" @bind-Value="model.Name"  />
+            </div>
+        </div>
+
+        <div class="form-group mb-3">
+            <label for="cpf">CPF</label>
+            <div class="col-8 text-center">
+            <InputText id="cpf" class="form-control bi" @bind-Value="model.cpf" />
+            </div>
+        </div>
+
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+        <button class="btn btn-success" type="submit">Confirmar</button>
+        <button class="btn btn-secondary" @onclick="Voltar" type="button">Cancelar</button>
+    </EditForm>
+}
+
+@code {
+    UserDao model { get; set; } = new();
+    private string cpf;
+    private string nome;
+    private bool _initialized;
+    private HttpClient _httpClient;
+
+    private void Voltar()
+    {
+        NavigationManager.NavigateTo($"/");
+    }
+
+    async Task PostEntidade()
+    {
+        if (string.IsNullOrEmpty(model.Name))
+        {
+            JSRuntime.InvokeAsync<bool>("alert", $"O nome é obrigatório.");
+            return;
+        }
+
+        if (string.IsNullOrEmpty(model.cpf))
+        {
+            JSRuntime.InvokeAsync<bool>("alert", $"O email é obrigatório");
+            return;
+        }
+
+        bool confirmed = await JSRuntime.InvokeAsync<bool>("confirm", $"Confirma o salvar?");
+        if (confirmed is false)
+            return;
+
+        _httpClient = HttpClientFactory.CreateClient("UserApi");
+        var content = new StringContent(System.Text.Json.JsonSerializer.Serialize(model), Encoding.UTF8, "application/json");
+        var response = await _httpClient.PostAsync("user/Alterar", content);
+        if (response.IsSuccessStatusCode && response.StatusCode == System.Net.HttpStatusCode.OK)
+        {
+            UsuarioService = new UsuarioService(model.Id, model.Name, model.Email, model.Ativo, model.EhMedico);
+            Voltar();
+        }
+        else
+            JSRuntime.InvokeAsync<bool>("alert", $"Falha na operação {response.StatusCode}");
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (!_initialized)
+        {
+            _initialized = true;
+            var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+            var user = authState.User;
+            if (user.Identity.IsAuthenticated)
+            {
+                try
+                {
+                    var email = user.Identity.Name;
+                    var url = $"User/{email}";
+                    _httpClient = HttpClientFactory.CreateClient("UserApi");
+                    var response = await _httpClient.GetAsync(url);
+
+                    if (response.IsSuccessStatusCode &&
+                        response.StatusCode == System.Net.HttpStatusCode.OK)
+                    {
+                        string content = await response.Content.ReadAsStringAsync();
+                        UserDao usuario = JsonConvert.DeserializeObject<UserDao>(content);
+                        if (usuario?.Ativo != null)
+                        {
+                            if (usuario.Email == usuario.Name)
+                            {
+                                usuario.Name = string.Empty;
+                                usuario.cpf = string.Empty;
+                            }
+                            model = usuario;
+                            StateHasChanged();
+                        }
+                    }
+                    else
+                    {
+                        var erro = await response.Content.ReadAsStringAsync();
+                        JSRuntime.InvokeAsync<bool>("alert", $"Err {erro}");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    JSRuntime.InvokeAsync<bool>("alert", $"Err {ex.Message}");
+                }
+            }
+        }
+    }
+}

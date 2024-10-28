@@ -13,7 +13,7 @@ namespace MedicalConsultation.Tests.UnitTests.UseCase.MedicalDoctor
 
         [Fact(DisplayName = "Teste de validacao da regra para alterar as informação de um Médico")]
         [Trait("UseCase.MedicalDoctor.Include", "Teste de validação para alterar as informação de um Médico")]
-        public void ValidateUseCase_Should_NotException_VerifyMethod()
+        public async Task ValidateUseCase_Should_NotException_VerifyMethod()
         {
             //Arrange
             var medicoExistente = _fixture.GenerateEntity();
@@ -30,6 +30,8 @@ namespace MedicalConsultation.Tests.UnitTests.UseCase.MedicalDoctor
             Assert.Equal(medicoAtualizar.CRM, medicoAtualizado.CRM);
             Assert.Equal(medicoAtualizar.Usuario.Name, medicoAtualizado.Usuario.Name);
             Assert.Equal(medicoAtualizar.Usuario.Email, medicoAtualizado.Usuario.Email);
+
+            await Task.Delay(1);
         }
     }
 }

@@ -15,7 +15,14 @@ namespace MedicalConsultation.Gateways
 
         public UserEntity Atualizar(UserEntity entity)
         {
-            _userRepository.Alterar(entity);
+            try
+            {
+                _userRepository.Alterar(entity);
+            }
+            catch (Exception ex)
+            {
+                var err = ex.Message;
+            }
             return entity;
         }
 

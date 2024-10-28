@@ -85,7 +85,6 @@ else
                 var user = authState.User;
                 if (user.Identity.IsAuthenticated)
                 {
-
                     _httpClient = HttpClientFactory.CreateClient("ConsultationApi");
                     var url = $"Consultation/ListarPorPaciente/{user.Identity.Name}";
                     var response = await _httpClient.GetAsync(url);

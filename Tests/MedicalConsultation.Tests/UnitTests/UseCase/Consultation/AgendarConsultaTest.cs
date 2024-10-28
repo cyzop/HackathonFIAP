@@ -20,7 +20,7 @@ namespace MedicalConsultation.Tests.UnitTests.UseCase.Consulta
 
         [Fact(DisplayName = "Teste de validacao da regra para Agendar uma Consulta")]
         [Trait("UseCase.Consultation.Include", "Teste de validação de agendamento de Consulta")]
-        public void ValidateUseCase_Should_NotException_VerifyMethod()
+        public async Task ValidateUseCase_Should_NotException_VerifyMethod()
         {
             //Arrange
             var medico = _medicalFixture.GenerateEntity();
@@ -40,11 +40,13 @@ namespace MedicalConsultation.Tests.UnitTests.UseCase.Consulta
             Assert.Equal(resultado.Paciente.Id, consulta.Paciente.Id);
             Assert.Equal(resultado.Date, consulta.Date);
             Assert.Equal(resultado.Status, consulta.Status);
+
+            await Task.Delay(1);
         }
 
         [Fact(DisplayName = "Teste de validacao da regra para Agendar uma Consulta sem informação do Medico")]
         [Trait("UseCase.Consultation.Include", "Teste de validação de agendamento de Consulta sem informação do Medico")]
-        public void ValidateUseCase_Should_AssertException_When_MedicalDoctorIsNull()
+        public async Task ValidateUseCase_Should_AssertException_When_MedicalDoctorIsNull()
         {
             //Arrange
             var consulta = _fixture.GenerateEntity();
@@ -56,11 +58,13 @@ namespace MedicalConsultation.Tests.UnitTests.UseCase.Consulta
 
             //Assert
             Assert.Equal(Messages.UseCaseValidationMessages.MedicalDoctorValidationMessages.MedicalDoctorNotFound, result.Message);
+
+            await Task.Delay(1);
         }
 
         [Fact(DisplayName = "Teste de validacao da regra para Agendar uma Consulta sem informação de Paciente")]
         [Trait("UseCase.Consultation.Include", "Teste de validação de agendamento de Consulta sem informação de Paciente")]
-        public void ValidateUseCase_Should_AssertException_When_PatientDoctorIsNull()
+        public async Task ValidateUseCase_Should_AssertException_When_PatientDoctorIsNull()
         {
             //Arrange
             var paciente = _patientFixture.GenerateEntity();
@@ -73,11 +77,13 @@ namespace MedicalConsultation.Tests.UnitTests.UseCase.Consulta
 
             //Assert
             Assert.Equal(Messages.UseCaseValidationMessages.PatientValidationMessages.PatientNotFound, result.Message);
+
+            await Task.Delay(1);
         }
 
         [Fact(DisplayName = "Teste de validacao da regra para Agendar uma Consulta em horário já ocupado")]
         [Trait("UseCase.Consultation.Include", "Teste de validação de agendamento de Consulta em horário já ocupado")]
-        public void ValidateUseCase_Should_AssertException_When_MedicalHasAnotherAppointmentAtTheSameTime()
+        public async Task ValidateUseCase_Should_AssertException_When_MedicalHasAnotherAppointmentAtTheSameTime()
         {
             //Arrange
             var paciente = _patientFixture.GenerateEntity();
@@ -91,11 +97,13 @@ namespace MedicalConsultation.Tests.UnitTests.UseCase.Consulta
 
             //Assert
             Assert.Equal(Messages.UseCaseValidationMessages.ConsultationValidationMessages.MedicalDoctorWithConsultationAtTheSameTime, result.Message);
+
+            await Task.Delay(1);
         }
 
         [Fact(DisplayName = "Teste de validacao da regra para Agendar uma Consulta em horário que Paciente já tem consulta agendada")]
         [Trait("UseCase.Consultation.Include", "Teste de validação de agendamento de Consulta em horário que Paciente já tem consulta agendada")]
-        public void ValidateUseCase_Should_AssertException_When_PatientHasAnotherAppointmentAtTheSameTime()
+        public async Task ValidateUseCase_Should_AssertException_When_PatientHasAnotherAppointmentAtTheSameTime()
         {
             //Arrange
             var paciente = _patientFixture.GenerateEntity();
@@ -110,6 +118,8 @@ namespace MedicalConsultation.Tests.UnitTests.UseCase.Consulta
 
             //Assert
             Assert.Equal(Messages.UseCaseValidationMessages.ConsultationValidationMessages.PatientWithConsultationAtTheSameTime, result.Message);
+
+            await Task.Delay(1);
         }
     }
 }

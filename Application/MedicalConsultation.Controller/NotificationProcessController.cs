@@ -14,7 +14,7 @@ namespace MedicalConsultation.Controller
         private string htmlTemplate = @"
         <html>
             <body>
-                <h1>Olá{0}!</h1>
+                <h1>Olá {0}!</h1>
                 <p>Este é um e-mail para informar que sua consulta com o Dr {1} em {2} está {3}.</p>
                 <p></p>
                 <p>Att, Sistema de Agendamento de Consultas!</p>
@@ -50,7 +50,7 @@ namespace MedicalConsultation.Controller
             //gerar mensagem
             string body = string.Empty;
             if (string.IsNullOrEmpty(notification.Message))
-                body = string.Format(htmlTemplate, nomeMedico, nomeMedico, dataConsulta, status);
+                body = string.Format(htmlTemplate, nomePaciente, nomeMedico, dataConsulta, status);
             else
                 body = notification.Message;
 
@@ -64,6 +64,8 @@ namespace MedicalConsultation.Controller
             
             //Registrar envio
             _repository.Incluir(notification);
+
+            Console.WriteLine(notification.Message);
         }
     }
 }

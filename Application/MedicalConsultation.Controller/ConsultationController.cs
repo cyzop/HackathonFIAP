@@ -10,12 +10,14 @@ namespace MedicalConsultation.Controller
         private readonly IConsultationGateway _consultationGateway;
         private readonly IMedicalDoctorGateway _medicalDoctorGateway;
         private readonly IUserGateway _userGateway;
+        private readonly INotificationGateway _notificationsGateway;
 
-        public ConsultationController(IConsultationGateway consultationGateway, IUserGateway userGateway, IMedicalDoctorGateway medicalDoctorGateway)
+        public ConsultationController(IConsultationGateway consultationGateway, IUserGateway userGateway, IMedicalDoctorGateway medicalDoctorGateway, INotificationGateway notificationsGateway)
         {
             _consultationGateway = consultationGateway;
             _userGateway = userGateway;
             _medicalDoctorGateway = medicalDoctorGateway;
+            _notificationsGateway = notificationsGateway;
         }
 
         public ConsultationEntity Alterar(ConsultationEntity entity)
@@ -28,6 +30,9 @@ namespace MedicalConsultation.Controller
                 if (alterar != null)
                 {
                     _consultationGateway.AtualizarConsulta(alterar);
+                    //enviar notificacao (producer)
+                    _notificationsGateway.EnviarNotificacao(
+                        new Entity.Notify.ConsultationNotificationEntity(alterar, DateTime.Now));
                     return alterar;
                 }
             }
@@ -42,7 +47,12 @@ namespace MedicalConsultation.Controller
                 var useCase = new CancelConsultationUseCase(consulta);
                 var cancelamento = useCase.VerificarCancelamento();
                 if (cancelamento != null)
+                {
                     _consultationGateway.AtualizarConsulta(cancelamento);
+                    //enviar notificacao (producer)
+                    _notificationsGateway.EnviarNotificacao(
+                        new Entity.Notify.ConsultationNotificationEntity(cancelamento, DateTime.Now));
+                }
             }
             return true;
         }
@@ -67,7 +77,11 @@ namespace MedicalConsultation.Controller
 
             var obj = useCase.VerificarExistente();
 
-            _consultationGateway.IncluirConsulta(obj);
+            var consultaIncluida = _consultationGateway.IncluirConsulta(obj);
+
+            //enviar notificacao (producer)
+            _notificationsGateway.EnviarNotificacao(
+                new Entity.Notify.ConsultationNotificationEntity(consultaIncluida, DateTime.Now));
 
             return obj;
         }
@@ -90,7 +104,10 @@ namespace MedicalConsultation.Controller
         {
             var medico = _medicalDoctorGateway.ObterPorEmail(email);
             if (medico != null)
-                return _consultationGateway.ListarConsultasMedicoAPartirDe(medico.Id, data)?.ToList();
+            {
+                var consultasEncontradas = _consultationGateway.ListarConsultasMedicoAPartirDe(medico.Id, data)?.ToList();
+                return consultasEncontradas?.Where(c=>c.Ativo)?.OrderBy(c=>c.Date)?.ToList();
+            }
             else
                 return null;
         }

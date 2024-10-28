@@ -38,7 +38,7 @@ namespace MedicalConsultation.Tests.UnitTests.API
 
         [Fact(DisplayName = "Teste unitário de listagem de medicos")]
         [Trait("Api.NotificationController", "Teste unitário de listagem de medicos")]
-        public async void Get_ReturnsOkResultWithData()
+        public async Task Get_ReturnsOkResultWithData()
         {
             //Arrange
             var medicos = new List<MedicalDoctorEntity>
@@ -63,6 +63,7 @@ namespace MedicalConsultation.Tests.UnitTests.API
             for (int i = 0; i < medicosDao.Count; i++)
                 medicosDao[i].Should().BeEquivalentTo(medicosRetorno[i]);
 
+            await Task.Delay(1);
         }
     }
 }

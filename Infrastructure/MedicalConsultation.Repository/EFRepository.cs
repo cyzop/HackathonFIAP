@@ -27,10 +27,12 @@ namespace MedicalConsultation.Repository
         public virtual T ConsultarPorId(int id)
           => _dbSet.FirstOrDefault(e => e.Id == id);
 
-        public virtual void Incluir(T entity)
+        public virtual T Incluir(T entity)
         {
             _dbSet.Add(entity);
             _context.SaveChanges();
+
+            return entity;
         }
 
         public virtual void Remover(int id)

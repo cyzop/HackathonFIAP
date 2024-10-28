@@ -31,7 +31,7 @@ namespace MedicalConsultation.Tests.UnitTests.API
 
         [Fact(DisplayName = "Teste unitário de geração de notificações de consulta")]
         [Trait("Api.NotificationController", "Teste unitário de geração de notificações de consulta")]
-        public async void Get_ReturnsOkResultWithData()
+        public async Task Get_ReturnsOkResultWithData()
         {
             //Arrange
             var notificacoes = new List<ConsultationNotificationEntity>
@@ -51,6 +51,8 @@ namespace MedicalConsultation.Tests.UnitTests.API
             Assert.IsType<OkObjectResult>(result?.Result);
             var okResult = (OkObjectResult)result.Result;
             Assert.Equal(idsConsulta, okResult.Value);
+
+            await Task.Delay(1);
         }
     }
 }

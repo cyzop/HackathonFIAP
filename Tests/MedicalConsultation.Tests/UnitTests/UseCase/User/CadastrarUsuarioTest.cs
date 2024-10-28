@@ -16,7 +16,7 @@ namespace MedicalConsultation.Tests.UnitTests.UseCase.User
 
         [Fact(DisplayName = "Teste de validacao da regra para cadastrar um Usuário (paciente)")]
         [Trait("UseCase.Patient.Include", "Teste de validação para cadastrar um Usuário (paciente)")]
-        public void ValidateUseCase_Should_NotException_VerifyMethod()
+        public async Task ValidateUseCase_Should_NotException_VerifyMethod()
         {
             //Arrange
             var novoPaciente = (UserEntity)_fixture.GenerateEntity();
@@ -30,11 +30,13 @@ namespace MedicalConsultation.Tests.UnitTests.UseCase.User
             Assert.Equal(incluir.Name, novoPaciente.Name);
             Assert.Equal(incluir.Email, novoPaciente.Email);
             Assert.Equal(incluir.CPF, novoPaciente.CPF);
+
+            await Task.Delay(1);
         }
 
         [Fact(DisplayName = "Teste de validacao da regra para cadastrar um Usuário com email já existente")]
         [Trait("UseCase.Patient.Include", "Teste de validação para cadastrar um Usuário com email já existente")]
-        public void ValidateUseCase_Should_AssertException_When_PatientAlreadyExistingWithSameEmail()
+        public async Task ValidateUseCase_Should_AssertException_When_PatientAlreadyExistingWithSameEmail()
         {
             //Arrange
             var novoPaciente = (UserEntity)_fixture.GenerateEntity();
@@ -48,6 +50,8 @@ namespace MedicalConsultation.Tests.UnitTests.UseCase.User
 
             //Assert
             Assert.Equal(PatientValidationMessages.PatientAlreadyExistingWithSameEmail, result.Message);
+
+            await Task.Delay(1);
         }
     }
 }

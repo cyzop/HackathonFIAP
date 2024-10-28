@@ -16,7 +16,7 @@ namespace MedicalConsultation.Tests.UnitTests.UseCase.MedicalDoctor
 
         [Fact(DisplayName = "Teste de validacao da regra para cadastrar um Médico")]
         [Trait("UseCase.MedicalDoctor.Include", "Teste de validação de cadastro de Médico")]
-        public void ValidateUseCase_Should_NotException_VerifyMethod()
+        public async Task ValidateUseCase_Should_NotException_VerifyMethod()
         {
             //Arrange
             var medico = _fixture.GenerateEntity();
@@ -30,11 +30,13 @@ namespace MedicalConsultation.Tests.UnitTests.UseCase.MedicalDoctor
             Assert.Equal(medico.CRM, medicoIncluir.CRM);
             Assert.Equal(medico.Usuario.Name, medico.Usuario.Name);
             Assert.Equal(medico.Usuario.Email, medicoIncluir.Usuario.Email);
+
+            await Task.Delay(1);
         }
 
         [Fact(DisplayName = "Teste de validacao da regra para cadastrar um Médico com email já existente")]
         [Trait("UseCase.MedicalDoctor.Include", "Teste de validaçãopara cadastrar um Médico com email já existente")]
-        public void ValidateUseCase_Should_AssertException_When_MedicalDoctorAlreadyExistingWithSameEmail()
+        public async Task ValidateUseCase_Should_AssertException_When_MedicalDoctorAlreadyExistingWithSameEmail()
         {
             //Arrange
             var medico = _fixture.GenerateEntity();
@@ -49,6 +51,8 @@ namespace MedicalConsultation.Tests.UnitTests.UseCase.MedicalDoctor
 
             //Assert
             Assert.Equal(MedicalDoctorValidationMessages.MedicalDoctorAlreadyExistingWithSameEmail, result.Message);
+
+            await Task.Delay(1);
         }
     }
 }

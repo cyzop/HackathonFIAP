@@ -1,8 +1,16 @@
-﻿@using MedicalConsultation.WebApp.Services
+﻿@using MedicalConsultation.Shared
+@using MedicalConsultation.WebApp.Services
+@using Newtonsoft.Json
 
 @implements IDisposable
 
 @inject NavigationManager NavigationManager
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
+@inject HttpClient Http
+@inject IHttpClientFactory HttpClientFactory
+
+@rendermode InteractiveServer
 
 <div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
@@ -32,8 +40,19 @@
             </NavLink>
         </div>
         } *@
-         <AuthorizeView>
+       @*  <AuthorizeView>
             <Authorized>
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="/teste">
+                        <img class="bi" src="https://img.icons8.com/?size=100&id=28WzaxCdZhVK&format=png&color=000000" /> Minhas Informações
+                    </NavLink>
+                </div>
+            </Authorized>
+        </AuthorizeView> *@
+        @if (_mostrarMenu)
+        {
+            <AuthorizeView>
+                <Authorized>
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="/schedules">
                 <img class="bi" src="https://img.icons8.com/?size=100&id=28WzaxCdZhVK&format=png&color=000000" /> Agendamentos
@@ -41,13 +60,14 @@
         </div>
         </Authorized>
         </AuthorizeView>
-
+        }
         <AuthorizeView>
             <Authorized>
                 <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="Account/Manage">
-                        <img class="bi" src="https://img.icons8.com/?size=100&id=IerOpHeUt2OH&format=png&color=000000"/>@context.User.Identity?.Name
-                        @* <span class="bi bi-person-fill-nav-menu" aria-hidden="true"></span>  *@
+                   @*  <NavLink class="nav-link" href="Account/Manage"> *@
+                    <NavLink class="nav-link" href="/teste">
+                        <img class="bi" src="https://img.icons8.com/?size=100&id=IerOpHeUt2OH&format=png&color=000000"/> Minhas Informações
+                        @* <span class="bi bi-person-fill-nav-menu" aria-hidden="true"></span> @context.User.Identity?.Name *@
                     </NavLink>
                 </div>
                 <div class="nav-item px-3">
@@ -81,12 +101,13 @@
 
 @code {
     private string? currentUrl;
+    private bool _mostrarMenu;
+    private bool isAuthenticated;
 
     protected override void OnInitialized()
     {
         currentUrl = NavigationManager.ToBaseRelativePath(NavigationManager.Uri);
         NavigationManager.LocationChanged += OnLocationChanged;
-
     }
 
     private void OnLocationChanged(object? sender, LocationChangedEventArgs e)
@@ -98,6 +119,37 @@
     public void Dispose()
     {
         NavigationManager.LocationChanged -= OnLocationChanged;
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        await MontaMenuAsync();
+    }
+
+    private async Task MontaMenuAsync()
+    {
+        if (!_mostrarMenu)
+        {
+            var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+            var user = authState.User;
+            isAuthenticated = user.Identity.IsAuthenticated;
+            if (isAuthenticated)
+            {
+                var email = user.Identity.Name;
+                var url = $"User/{email}";
+                HttpClient _httpClient = HttpClientFactory.CreateClient("UserApi");
+                var response = await _httpClient.GetAsync(url);
+
+                if (response.IsSuccessStatusCode && response.StatusCode == System.Net.HttpStatusCode.OK)
+                {
+                    string content = await response.Content.ReadAsStringAsync();
+                    UserDao usuario = JsonConvert.DeserializeObject<UserDao>(content);
+                    _mostrarMenu = (usuario.Name!=usuario.Email);
+                    StateHasChanged();
+                }
+            }
+        }
     }
 }
 

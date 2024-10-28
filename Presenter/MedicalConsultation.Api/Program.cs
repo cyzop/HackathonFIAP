@@ -14,7 +14,8 @@ var config = new ConfigurationBuilder()
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
-    options.UseSqlServer(config.GetConnectionString("ConnectionString"));
+    var str = config.GetConnectionString("ConnectionString");
+    options.UseSqlServer(str);
 }, ServiceLifetime.Scoped);
 
 builder.Host

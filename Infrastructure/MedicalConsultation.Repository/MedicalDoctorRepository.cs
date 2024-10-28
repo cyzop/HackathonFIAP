@@ -42,10 +42,11 @@ namespace MedicalConsultation.Repository
                 .FirstOrDefault(e => e.Id == id);
         }
 
-        public void Incluir(MedicalDoctorEntity entity)
+        public MedicalDoctorEntity Incluir(MedicalDoctorEntity entity)
         {
             _dbSet.Add(entity);
             _context.SaveChanges();
+            return entity;
         }
     }
 }

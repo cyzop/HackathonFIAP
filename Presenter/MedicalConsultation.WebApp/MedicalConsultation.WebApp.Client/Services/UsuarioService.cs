@@ -29,6 +29,15 @@
             Ativo = ativo;
             Medico = medico;
         }
+        public UsuarioService() { }
+        public UsuarioService(int id, string nome, string email, bool ativo, bool medico)
+        {
+            Id = id;
+            Nome = nome;
+            Email = email;
+            Ativo = ativo;
+            Medico = medico;
+        }
     }
 
 }

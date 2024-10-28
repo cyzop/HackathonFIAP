@@ -6,6 +6,7 @@ namespace MedicalConsultation.WebApp.Client.Extensions
     {
         public static IServiceCollection AddServices(this IServiceCollection services, IConfiguration config)
         {
+            services.AddSingleton<UsuarioService>();
             services.AddTransient<ConsultationApi>();
 
             services.AddHttpClient("ConsultationApi", client =>

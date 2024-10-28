@@ -15,10 +15,11 @@ namespace MedicalConsultation.Repository
             _dbSet = context.Set<ConsultationNotificationEntity>();
         }
 
-        public void Incluir(ConsultationNotificationEntity entity)
+        public ConsultationNotificationEntity Incluir(ConsultationNotificationEntity entity)
         {
             _dbSet.Add(entity);
             _context.SaveChanges();
+            return entity;
         }
 
         public IEnumerable<ConsultationNotificationEntity> ConsultarPorIdConsulta(int idConsulta)

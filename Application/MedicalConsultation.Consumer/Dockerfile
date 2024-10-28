@@ -20,7 +20,7 @@ COPY ["Presenter/MedicalConsultation.Shared/MedicalConsultation.Shared.csproj", 
 COPY ["Infrastructure/MedicalConsultation.MassTransit/MedicalConsultation.MassTransit.csproj", "Infrastructure/MedicalConsultation.MassTransit/"]
 COPY ["Infrastructure/MedicalConsultation.Repository/MedicalConsultation.Repository.csproj", "Infrastructure/MedicalConsultation.Repository/"]
 COPY ["Application/MedicalConsultation.Controller/MedicalConsultation.Controller.csproj", "Application/MedicalConsultation.Controller/"]
-COPY ["Usecase/MedicalConsultation.UseCases/MedicalConsultation.UseCases.csproj", "Usecase/MedicalConsultation.UseCases/"]
+COPY ["Application/MedicalConsultation.UseCases/MedicalConsultation.UseCases.csproj", "Application/MedicalConsultation.UseCases/"]
 RUN dotnet restore "./Application/MedicalConsultation.Consumer/MedicalConsultation.Consumer.csproj"
 COPY . .
 WORKDIR "/src/Application/MedicalConsultation.Consumer"

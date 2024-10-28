@@ -20,7 +20,7 @@ namespace MedicalConsultation.Tests.UnitTests.Entity
 
         [Fact(DisplayName = "Teste unitario de validacao de Notificação")]
         [Trait("Entity.Notificatication","Teste unitario de validacao de Notificação")]
-        public async void ValidateEntity_Should_Create_NotificationEntity()
+        public async Task ValidateEntity_Should_Create_NotificationEntity()
         {
             //Arrange
             var entidade = _fixture.GenerateEntity();
@@ -30,11 +30,13 @@ namespace MedicalConsultation.Tests.UnitTests.Entity
 
             Assert.True(act);
             Assert.Equal(typeof(ConsultationNotificationEntity), entidade.GetType());
+
+            await Task.Delay(1);
         }
 
         [Fact(DisplayName = "Teste unitario de validacao de Notificação sem Consulta informada")]
         [Trait("Entity.Notification", "Teste unitario de validacao de Notificação sem Consulta informada")]
-        public async void ValidateEntity_Should_AssertException_When_ConsultationIsEmpty()
+        public async Task ValidateEntity_Should_AssertException_When_ConsultationIsEmpty()
         {
             //Arrange
 
@@ -43,6 +45,8 @@ namespace MedicalConsultation.Tests.UnitTests.Entity
 
             //Assert
             Assert.Equal(NotificationValidationMessages.ConsultationCannotBeNullOrEmpty, result.Message);
+
+            await Task.Delay(1);
         }
 
     }

@@ -36,6 +36,14 @@ namespace MedicalConsultation.Entity
             SetAtivo(true);
         }
 
+        public UserEntity(string name, string email, string cpf, bool ativo)
+        {
+            Name = name;
+            Email = email;
+            CPF = cpf;
+            SetAtivo(true);
+        }
+
         public UserEntity(int id, string name, string cpf, string email,  bool ativo) : base(id, ativo)
         {
             Name = name;

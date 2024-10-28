@@ -26,7 +26,7 @@ namespace MedicalConsultation.Controller
             registroBase.SetCpf(entity.CPF);
             registroBase.SetName(entity.Name);
 
-            return _userGateway.Atualizar(entity);
+            return _userGateway.Atualizar(registroBase);
         }       
 
         public IEnumerable<UserEntity> ListarAtivos()

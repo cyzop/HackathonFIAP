@@ -17,7 +17,7 @@ namespace MedicalConsultation.Tests.UnitTests.Entity
 
         [Fact(DisplayName = "Teste unitario de validacao de Consulta")]
         [Trait("Entity.Consultation", "Teste unitario de validacao de Consulta")]
-        public async void ValidateEntity_Should_Create_ConsultationEntity()
+        public async Task ValidateEntity_Should_Create_ConsultationEntity()
         {
             //Arrange
             var entidade = _fixture.GenerateEntity();
@@ -27,11 +27,12 @@ namespace MedicalConsultation.Tests.UnitTests.Entity
 
             Assert.True(act);
             Assert.Equal(typeof(ConsultationEntity), entidade.GetType());
+            await Task.Delay(1);
         }
 
         [Fact(DisplayName = "Teste unitario de validacao de Consulta sem Paciente informado")]
         [Trait("Entity.Consultation", "Teste unitario de validacao de Consulta sem Paciente informado")]
-        public async void ValidateEntity_Should_AssertException_When_PatientIsEmpty()
+        public async Task ValidateEntity_Should_AssertException_When_PatientIsEmpty()
         {
             //Arrange
 
@@ -40,11 +41,13 @@ namespace MedicalConsultation.Tests.UnitTests.Entity
 
             //Assert
             Assert.Equal(ConsultationValidationMessages.PatientCannotBeNullOrEmpty, result.Message);
+
+            await Task.Delay(1);
         }
 
         [Fact(DisplayName = "Teste unitario de validacao de Consulta sem Medico informado")]
         [Trait("Entity.Consultation", "Teste unitario de validacao de Consulta sem Medico informado")]
-        public async void ValidateEntity_Should_AssertException_When_MedicalDoctorIsEmpty()
+        public async Task ValidateEntity_Should_AssertException_When_MedicalDoctorIsEmpty()
         {
             //Arrange
 
@@ -53,11 +56,13 @@ namespace MedicalConsultation.Tests.UnitTests.Entity
 
             //Assert
             Assert.Equal(ConsultationValidationMessages.MedicalDoctorCannotBeNullOrEmpty, result.Message);
+
+            await Task.Delay(1);
         }
 
         [Fact(DisplayName = "Teste unitario de validacao de Consulta sem Data informada")]
         [Trait("Entity.Consultation", "Teste unitario de validacao de Consulta sem Data informada")]
-        public async void ValidateEntity_Should_AssertException_When_DateIsMinValue()
+        public async Task ValidateEntity_Should_AssertException_When_DateIsMinValue()
         {
             //Arrange
 
@@ -66,6 +71,8 @@ namespace MedicalConsultation.Tests.UnitTests.Entity
 
             //Assert
             Assert.Equal(ConsultationValidationMessages.DateCannotBeNullOrEmpty, result.Message);
+
+            await Task.Delay(1);
         }
     }
 }

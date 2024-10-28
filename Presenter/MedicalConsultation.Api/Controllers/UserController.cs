@@ -60,7 +60,7 @@ namespace MedicalConsultation.Api.Controllers
             var medico = patient!=null && _medicalDoctorController.ObterUsuarioPorEmail(email) != null;
             //se nao existir cadastrar
             if (patient == null)
-                patient = new UserEntity(email);
+                patient = _controller.Incluir(new UserEntity(email, email, "000.000.000-00", true));
             
             var result = _entityConverter.Convert(patient);
             result.EhMedico = medico;

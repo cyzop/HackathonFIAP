@@ -20,7 +20,7 @@ namespace MedicalConsultation.Tests.UnitTests.UseCase.Consulta
 
         [Fact(DisplayName = "Teste de validacao da regra para Reagendar uma Consulta sem informação da Consulta")]
         [Trait("UseCase.Consultation.ChangeDate", "Teste de validação de reagendamento de Consulta sem informar a Consulta")]
-        public void ValidateUseCase_Should_AssertException_When_ConsultationIsNull()
+        public async Task ValidateUseCase_Should_AssertException_When_ConsultationIsNull()
         {
             //Arrange
             ConsultationEntity consultaMarcada = _fixture.GenerateEntity();
@@ -32,11 +32,13 @@ namespace MedicalConsultation.Tests.UnitTests.UseCase.Consulta
 
             //Assert
             Assert.Equal(ConsultationValidationMessages.ConsultationNotFound, result.Message);
+
+            await Task.Delay(1);
         }
 
         [Fact(DisplayName = "Teste de validacao da regra para Reagendar uma Consulta para data que já passou")]
         [Trait("UseCase.Consultation.ChangeDate", "Teste de validação de reagendamento de Consulta para data que já passou")]
-        public void ValidateUseCase_Should_AssertException_When_ConsultationDateIsInvalid()
+        public async Task ValidateUseCase_Should_AssertException_When_ConsultationDateIsInvalid()
         {
             //Arrange
             DateTime dataPassada = DateTime.Now.AddDays(-1);
@@ -52,6 +54,8 @@ namespace MedicalConsultation.Tests.UnitTests.UseCase.Consulta
 
             //Assert
             Assert.Equal(ConsultationValidationMessages.ConsultationDateHasPasses, result.Message);
+
+            await Task.Delay(1);
         }
     }
 }

@@ -46,7 +46,7 @@ namespace MedicalConsultation.Tests.UnitTests.API
 
         [Fact(DisplayName = "Teste unitário de listagem de consultas agendadas para um medico")]
         [Trait("Api.ConsultationController", "Teste unitário de listagem de consultas agendadas medico")]
-        public async void Get_ReturnsOkResultWithDataByMedicalDoctor()
+        public async Task Get_ReturnsOkResultWithDataByMedicalDoctor()
         {
             //Arrange
             var medico = _medicalDoctorTestFixture.GenerateEntity();
@@ -75,11 +75,13 @@ namespace MedicalConsultation.Tests.UnitTests.API
             for (int i = 0; i < consultasDao.Count; i++)
                 consultasDao[i].Should().BeEquivalentTo(consultasRetorno[i]);
 
+            await Task.Delay(1);
+
         }
 
         [Fact(DisplayName = "Teste unitário de listagem de consultas agendadas de um paciente")]
         [Trait("Api.ConsultationController", "Teste unitário de listagem de consultas agendadas de um paciente")]
-        public async void Get_ReturnsOkResultWithDataByPatient()
+        public async Task Get_ReturnsOkResultWithDataByPatient()
         {
             //Arrange
             var paciente = _patientTestFixture.GenerateEntity();
@@ -106,6 +108,7 @@ namespace MedicalConsultation.Tests.UnitTests.API
             for (int i = 0; i < consultasDao.Count; i++)
                 consultasDao[i].Should().BeEquivalentTo(consultasRetorno[i]);
 
+            await Task.Delay(1);
         }
 
     }

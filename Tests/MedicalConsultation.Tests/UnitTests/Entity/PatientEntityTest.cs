@@ -14,7 +14,7 @@ namespace MedicalConsultation.Tests.UnitTests.Entity
 
         [Fact(DisplayName = "Teste unitario de validacao de Paciente")]
         [Trait("Entity.Patient", "Teste unitario de validacao de Paciente")]
-        public async void ValidateEntity_Should_Create_PatientEntity()
+        public async Task ValidateEntity_Should_Create_PatientEntity()
         {
             //Arrange
             var entidade = _fixture.GenerateEntity();
@@ -24,11 +24,13 @@ namespace MedicalConsultation.Tests.UnitTests.Entity
 
             Assert.True(act);
             Assert.Equal(typeof(PatientEntity), entidade.GetType());
+
+            await Task.Delay(1);
         }
 
         [Fact(DisplayName = "Teste unitario de validacao de Paciente com Nome vazio")]
         [Trait("Entity.Patient", "Teste unitario de validacao de Paciente com Nome vazio")]
-        public async void ValidateEntity_Should_AssertException_When_InvalidName()
+        public async Task ValidateEntity_Should_AssertException_When_InvalidName()
         {
             //Arrange
             
@@ -37,11 +39,13 @@ namespace MedicalConsultation.Tests.UnitTests.Entity
 
             //Assert
             Assert.Equal(PatientValidationMessages.NameCannotBeNullOrEmpty, result.Message);
+
+            await Task.Delay(1);
         }
 
         [Fact(DisplayName = "Teste unitario de validacao de Paciente com Nome muito grande")]
         [Trait("Entity.Patient", "Teste unitario de validacao de Paciente com Nome muito grande")]
-        public async void ValidateEntity_Should_AssertException_When_NameIsGreatThen150()
+        public async Task ValidateEntity_Should_AssertException_When_NameIsGreatThen150()
         {
             //Arrange
 
@@ -50,11 +54,13 @@ namespace MedicalConsultation.Tests.UnitTests.Entity
 
             //Assert
             Assert.Equal(PatientValidationMessages.NameGreaterThanLimit(150), result.Message);
+
+            await Task.Delay(1);
         }
 
         [Fact(DisplayName = "Teste unitario de validacao de Paciente com Email vazio")]
         [Trait("Entity.Patient", "Teste unitario de validacao de Paciente com Email vazio")]
-        public async void ValidateEntity_Should_AssertException_When_InvalidMail()
+        public async Task ValidateEntity_Should_AssertException_When_InvalidMail()
         {
             //Arrange
 
@@ -63,6 +69,8 @@ namespace MedicalConsultation.Tests.UnitTests.Entity
 
             //Assert
             Assert.Equal(PatientValidationMessages.EmailCannotBeNullOrEmpty, result.Message);
+
+            await Task.Delay(1);
         }
     }
 }

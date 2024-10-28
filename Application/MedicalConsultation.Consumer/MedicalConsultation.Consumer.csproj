@@ -22,6 +22,7 @@
     <ProjectReference Include="..\..\Infrastructure\MedicalConsultation.Mail\MedicalConsultation.Mail.csproj" />
     <ProjectReference Include="..\..\Infrastructure\MedicalConsultation.MassTransit\MedicalConsultation.MassTransit.csproj" />
     <ProjectReference Include="..\..\Infrastructure\MedicalConsultation.Repository\MedicalConsultation.Repository.csproj" />
+    <ProjectReference Include="..\..\Usecase\MedicalConsultation.UseCases\MedicalConsultation.UseCases.csproj" />
     <ProjectReference Include="..\MedicalConsultation.Controller\MedicalConsultation.Controller.csproj" />
     <ProjectReference Include="..\MedicalConsultation.Interfaces\MedicalConsultation.Interfaces.csproj" />
   </ItemGroup>

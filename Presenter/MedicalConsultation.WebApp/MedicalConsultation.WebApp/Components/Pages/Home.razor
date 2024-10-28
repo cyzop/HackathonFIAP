@@ -1,10 +1,12 @@
 ﻿@page "/"
 
+@using BlazorInputMask
 @using Microsoft.AspNetCore.Components.Authorization
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 @using MedicalConsultation.Shared;
 @using Newtonsoft.Json
 @using MedicalConsultation.WebApp.Services
+@using System.Text
 
 
 @inject AuthenticationStateProvider AuthenticationStateProvider
@@ -14,20 +16,22 @@
 @inject NavigationManager NavigationManager
 @inject IHttpClientFactory HttpClientFactory
 
-
 <PageTitle>Página Inicial</PageTitle>
 
 <h1> Sistema de Agendamento de Consultas</h1>
 <br>
  <AuthorizeView>
 <Authorized>
-@if (UsuarioService?.Id >0)
+@if (UsuarioService?.Id > 0 && !string.IsNullOrEmpty(UsuarioService?.Nome))
 {
-    <h3>Seja bem vindo, @UsuarioService?.Nome!</h3>
+     <h3>Seja bem vindo, @UsuarioService.Nome!</h3>
 }
 else
 {
-    <h3>Seja bem vindo!</h3>
+    <h3>Seja bem vindo!</h3> 
+    <br>
+    <h5>Clique em Minhas Informações e complete seus dados antes de utilizar o sistema!</h5>
+            @* <h3>Seja bem vindo, @UsuarioService?.Nome!</h3> *@
 }
 </Authorized>
 </AuthorizeView>
@@ -36,11 +40,14 @@ else
  <AuthorizeView>
         <Authorized>
             <div class="icon-container">
-             <div class="nav-item px-3">
-                <NavLink class="nav-link" href="schedules" >
+            @if (!string.IsNullOrEmpty(UsuarioService?.Nome))
+            {
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="schedules" >
                     <img class="bi oi" src="https://img.icons8.com/?size=100&id=28WzaxCdZhVK&format=png&color=000000"/> Minhas Consultas
                 </NavLink>
             </div>
+            }
              @if (isAuthenticated && UsuarioService.Medico)
              {
                 <div class="nav-item px-3">
@@ -57,8 +64,9 @@ else
     private HttpClient _httpClient;
     private bool _initialized;
     private bool isAuthenticated;
+    private UserDao userInfo { get; set; } = new();
 
-    protected override void OnAfterRender(bool firstRender)
+    protected override async void OnAfterRender(bool firstRender)
     {
         if (firstRender)
         {
@@ -76,36 +84,40 @@ else
             isAuthenticated = user.Identity.IsAuthenticated;
             if (user.Identity.IsAuthenticated)
             {
-                //if (UsuarioService?.Id <=0)
-               // {
-                    try
-                    {
-                        var email = user.Identity.Name;
-                        var url = $"User/{email}";
-                        _httpClient = HttpClientFactory.CreateClient("UserApi");
-                        var response = await _httpClient.GetAsync(url);
+                try
+                {
+                    var email = user.Identity.Name;
+                    var url = $"User/{email}";
+                    _httpClient = HttpClientFactory.CreateClient("UserApi");
+                    var response = await _httpClient.GetAsync(url);
 
-                        if (response.IsSuccessStatusCode &&
-                            response.StatusCode == System.Net.HttpStatusCode.OK)
-                        {
-                            string content = await response.Content.ReadAsStringAsync();
-                            UserDao usuario = JsonConvert.DeserializeObject<UserDao>(content);
-                            if (usuario?.Ativo != null)
-                            {
-                                UsuarioService.SetUsuario(usuario.Id, usuario.Name, usuario.Email, usuario.Ativo, usuario.EhMedico);
-                                StateHasChanged();//atualizar tela
-                            }
-                        }
-                        else
-                        {
-                            var erro = await response.Content.ReadAsStringAsync();
-                        }
-                    }
-                    catch (Exception ex)
+                    if (response.IsSuccessStatusCode &&
+                        response.StatusCode == System.Net.HttpStatusCode.OK)
                     {
-                        JSRuntime.InvokeAsync<bool>("alert", $"Err {ex.Message}");
+                        string content = await response.Content.ReadAsStringAsync();
+                        UserDao usuario = JsonConvert.DeserializeObject<UserDao>(content);
+                        if (usuario?.Ativo != null )
+                        {
+                            userInfo = usuario;
+                            if (usuario.Email == usuario.Name)
+                            {
+                                userInfo.Name = string.Empty;
+                                userInfo.cpf = string.Empty;
+                            }
+                            UsuarioService = new UsuarioService(usuario.Id, usuario.Name, usuario.Email, usuario.Ativo, usuario.EhMedico);
+
+                            StateHasChanged();//atualizar tela
+                        }
                     }
-              //  }
+                    else
+                    {
+                        var erro = await response.Content.ReadAsStringAsync();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    JSRuntime.InvokeAsync<bool>("alert", $"Err {ex.Message}");
+                }
             }
         }
     }
