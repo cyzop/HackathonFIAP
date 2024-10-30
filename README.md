@@ -120,6 +120,9 @@ Esta api de monitoramento foi feita com o intuido de permitir que um Schedule po
      - Endereço para envio do Email
 - Iniciar o projeto com Depuração apertando o F5, para executar o projeto utilizando o Swagger
 
+# Docker
+
+Os projetos também podem ser utilizados através do docker. Em cada projeto envolvido existe o arquivo Dockerfile assim com Docker-compose na solution.
 
 # Testes
 
