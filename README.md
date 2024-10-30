@@ -6,13 +6,15 @@
 O Sistema de Agendamento de Consultas foi desenvolvido em .Net Core (8) para atender ao Hackathon do curso ARQUITETURA DE SISTEMAS .NET COM AZURE da FIAP - Turma 2NETT.
 
 Este sistema tem o intuito de permitir o usuário, no papel de Paciente, agendar, reagendar ou cancelar consultas. Neste sistema o usuário logado também poderá ser um Médico onde além da gestão com Paciente ele terá a gestão dos agendamentos para atendimento médico. 
-No sistema o usuário pode se cadastrar, como Paciente, definido uma senha que atenda aos critérios de senha fortes, verificar seu e-mail e acessar a aplicação.
+No sistema o usuário pode se cadastrar, como Paciente, definido uma senha que atenda aos critérios de senha forte, verificar seu e-mail e acessar a aplicação.
 
 A aplicação apresenta um menu com acesso aos agendamento já realizados, onde também é possível realizar novos agendamentos, reagendar ou cancelar algum já existente. No caso do usuário logado também ser um Médico existirá o acesso, na tela principal, para a agenda dos atendimentos.
 
+O cadastro de Médicos não está junto das telas do sistema pois fui pensado para ser um módulo à parte. As rotas para a gestão do médico estão dispostas na api da aplicação onde o swagger está ligado permitindo o cadatro dos mesmos.
+
 Para utilizar o sistema é exigido que o usuário esteja logado.
 
-Este repositório se refere tanto ao Front-end e Back-end da aplicação onde pode ser utilizado com o Swagger (disponível em modo Debug) para visualização dos endpoints disponíveis.
+Este repositório se refere tanto ao Front-end (Blazor) quanto ao Back-end da aplicação onde pode-se utilizar o Swagger para acesso aos endpoints disponíveis a nível de validação/teste. 
 
 # Requisitos
 
@@ -24,33 +26,35 @@ O documento com o levanto de requisitos do software e seus critérios de aceite 
 - Microsoft Azure 
 - Microsoft .Net Core 8 WebApi (Back-end)
 - Microsoft .Net Blazor WebAsssembly (Front-end)
-- EF Core
+- Messageria (Azure Service Bus)
+- Email (Azure Communication Services)
+- EF Core (SQLServer)
 - XUnit 
-- SqlServer (Azure)
+- SqlServer (Azure DBaaS)
 
 
 ## Banco de Dados
 
-Em função do propósito da aplicação representar uma associação entre diferentes entidades, foi utilizado banco de dados relacional onde foi escolhido o Sql Server.
+Em função do propósito da aplicação representar uma associação entre diferentes entidades, foi utilizado banco de dados relacional onde foi escolhido o Sql Server, solução também utilizada para fluxo de autenticação de usuários (Blazor WebAssembly with Individual Accounts).
 
 ## Framework de Testes
 
-Para garantir a correta integração e que as diferentes partes do sistema funcionem corretamente é essencial que se utilize os testes de integração.
-Em nosso projeto, além dos testes unitários, também realizamos testes de integração com xUnit, desta forma é possível verificar se diferentes componentes do sistema funcionam corretamente juntos.
+Como solução de testes foi adotada a framework xUnit oferecendo cobertura de teste para as regras de negócios e principais parte do sistema. 
 
 A execução do testes está automatizada no GitHub Actions.
 
 ## Arquitetura do Projeto
 
-Para melhorar organização do código, adotamos o uso de diretórios e dentro de cada um os projetos pertinentes. 
+Visando refletir em arquitetura limpa e para melhorar organização do código, adotamos o uso de subdiretórios, na solution do sistema, onde estão dentro de cada um os projetos pertinentes. 
 Estes diretórios e projetos estão organizados da seguinta maneira:
 
 📁Application
-    - Consumer
-    - Controller
+    - Consumer   
+    - Controller 
     - Interfaces
     - Messages
     - Validations
+    - UseCases
    
 📁Domain
    - Entity
@@ -69,14 +73,7 @@ Estes diretórios e projetos estão organizados da seguinta maneira:
    - Notification.Api
    - WebApp
    - WebApp.Client
-
-📁UseCase
-   - UseCases
  
-📁Tests
-   📁IntegratedTests
-     - PosTech.PortFolio.IntegratedTests
-
 📁Tests
   - UnitTests
    
@@ -96,13 +93,18 @@ Pode utilizar tanto a instalação local do banco de dados (Sql Server Express),
 
 Ajustar a ConnectionString nos arquivos appsettings.json das apis ou através da variáveis de ambiente (recomendado)
 
-Para criação do banco de dados da aplicação, utilizar a Migration existente no projeto MedicalConsultation.Repository.
+Para criação do banco de dados da aplicação, utilizar o Script que está no projeto MedicalConsultation.Repository.
 
 Para a criação do banco de autenticação, pode-se utilizar a Migration existente no projeto MedicalConsultation.WebApp ou ao acessar a aplicação pela primeira vez será apresentada uma mensagem de erro onde existe a possibilidade de aplicar a migration através de uma opção na tela.
 
 ## Envio de Email
 
 Foi adotada solução do Services Communication no Azure para o envio de email e seu acesso fica configurado no projeto MedicalConsultation.Consumer.
+
+O Consumer é um WorkProcess que fica monitorando a fila e assim que chega mensagem ele realiza o envio. 
+
+A geração da mensagem de e-mail, que é colocada na fila para ser enviada, é feita os momentos de alteração de um agendamento, como Agendar, Reagendar ou Cancelar a consulta e também através de um processo de verificação e disparo por uma rota na api de monitoramento.
+Esta api de monitoramento foi feita com o intuido de permitir que um Schedule possa chamá-la onde ela irá notificar as consultas agendadas para o dia seguinte. Esta rotina deve ser schedulada para ser executada diária, a fim de servir como lembrete da consulta do usuário.
 
 ## Utilizando o Visual Studio Community 2022 para rodar o projeto localmente
 
@@ -112,7 +114,10 @@ Foi adotada solução do Services Communication no Azure para o envio de email e
      - MedicalConsultationNotification.Api
      - MedicalConsultation.Consumer
      - MedicalConsultation.WebApp
-
+- Ajustar as informações em cada projeto, no appsettings ou em variáveis de ambiente com:
+     - String de Conexao com o banco de dados
+     - Url do Azure Bus
+     - Endereço para envio do Email
 - Iniciar o projeto com Depuração apertando o F5, para executar o projeto utilizando o Swagger
 
 
