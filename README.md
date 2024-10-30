@@ -49,12 +49,12 @@ Visando refletir em arquitetura limpa e para melhorar organização do código, 
 Estes diretórios e projetos estão organizados da seguinta maneira:
 
 📁Application
-    - Consumer   
-    - Controller 
-    - Interfaces
-    - Messages
-    - Validations
-    - UseCases
+   - Consumer   
+   - Controller 
+   - Interfaces
+   - Messages
+   - Validations
+   - UseCases
    
 📁Domain
    - Entity
