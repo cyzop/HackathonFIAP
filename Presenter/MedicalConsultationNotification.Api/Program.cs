@@ -34,7 +34,7 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy(name: "CorsApiPolicy",
+    options.AddPolicy(name: "NotificationApiPolicy",
         policy =>
         {
             policy.AllowAnyHeader()
@@ -45,14 +45,14 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
-app.UseCors("CorsApiPolicy");
+app.UseCors("NotificationApiPolicy");
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
+//if (app.Environment.IsDevelopment())
+//{
     app.UseSwagger();
     app.UseSwaggerUI();
-}
+//}
 
 app.UseHttpsRedirection();
 

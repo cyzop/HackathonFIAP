@@ -18,13 +18,8 @@ namespace MedicalConsultation.UseCases.Consultation
         {
             Assertion.AssertIsNotNull(_consultaMarcada, ConsultationValidationMessages.ConsultationNotFound);
             //Assertion.AssertIfDateIsGreaterThanOrEquals(_consultaMarcada.Date, DateTime.Now, ConsultationValidationMessages.ConsultationDateHasPasses);
-
-            return new ConsultationEntity(_consultaMarcada.Id, 
-                _consultaMarcada.Paciente, 
-                _consultaMarcada.Medico, 
-                _consultaMarcada.Date, 
-                ConsultationStatus.Cancelada, 
-                DateTime.Now);
+            _consultaMarcada.SetStatus(ConsultationStatus.Reagendada);
+            return _consultaMarcada;
         }
     }
 }
